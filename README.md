@@ -117,6 +117,7 @@ npm test
 
 ## 📸 Screenshots
 ![Application Features Showcase](./screenshots_showcase.png)
+![Polling Booth Finder Full View](./booth_finder_full.png)
 
 ---
 
