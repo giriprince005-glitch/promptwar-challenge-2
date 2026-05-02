@@ -160,42 +160,66 @@ const FALLBACK_RESPONSE = {
 
 // ─── Public API ─────────────────────────────────────────────────
 
+// ─── Recommendations ──────────────────────────────────────────
+export const RECOMMENDATIONS = {
+  WIZARD: {
+    id: 'rec_wizard',
+    title: 'First Time Voter?',
+    message: 'It looks like you might be new to the process. Would you like a step-by-step guide to voter registration?',
+    actionLabel: 'Open Voter Guide',
+    component: 'wizard'
+  },
+  FLASHCARDS: {
+    id: 'rec_flashcards',
+    title: 'Deepen Your Knowledge',
+    message: 'You have been asking about several electoral terms. Would you like to explore our interactive learning cards?',
+    actionLabel: 'Learn Terms',
+    component: 'flashcards'
+  },
+  BOOTH: {
+    id: 'rec_booth',
+    title: 'Ready to Vote?',
+    message: 'You can find your designated polling station on our interactive map. Want to check your booth location?',
+    actionLabel: 'Find Booth',
+    component: 'booth'
+  }
+};
+
+/**
+ * Analyzes user history and current intent to generate proactive recommendations.
+ * 
+ * @param {string} lastMessage - The user's latest query
+ * @param {string} currentIntent - The intent of the latest query
+ * @param {Array} history - Array of previous intents/messages
+ * @returns {object|null} - A recommendation object from RECOMMENDATIONS or null
+ */
+export const analyzeBehavior = (lastMessage, currentIntent, history = []) => {
+  const normalizedMessage = lastMessage.toLowerCase();
+  
+  // 1. Proactive for first-time voters
+  const firstTimeKeywords = ['first time', 'new voter', 'how to start', 'never voted', '18 years', 'just turned'];
+  if (firstTimeKeywords.some(k => normalizedMessage.includes(k)) || currentIntent === INTENTS.REGISTRATION) {
+    return RECOMMENDATIONS.WIZARD;
+  }
+
+  // 2. Proactive for "confused" or "heavy learning" users
+  const confusedKeywords = ['confused', 'don\'t understand', 'what is', 'explain', 'tell me more about'];
+  const learningHistory = history.filter(h => h.intent === INTENTS.LEARNING).length;
+  if (confusedKeywords.some(k => normalizedMessage.includes(k)) || learningHistory >= 2) {
+    return RECOMMENDATIONS.FLASHCARDS;
+  }
+
+  // 3. Proactive for users asking about polling specifics
+  if (currentIntent === INTENTS.POLLING || currentIntent === INTENTS.BOOTH_FINDER) {
+    return RECOMMENDATIONS.BOOTH;
+  }
+
+  return null;
+};
+
 /**
  * Detects the user's intent from their message text.
- * Uses keyword matching with scoring — the intent with
- * the most keyword matches wins.
- * 
- * @param {string} message - The user's raw message
- * @returns {string} - One of the INTENTS values
- */
-export const detectIntent = (message) => {
-  const normalizedMessage = message.toLowerCase().trim();
-  
-  const scores = {};
-  
-  for (const pattern of INTENT_PATTERNS) {
-    scores[pattern.intent] = 0;
-    for (const keyword of pattern.keywords) {
-      if (normalizedMessage.includes(keyword)) {
-        // Longer keyword matches are weighted more heavily
-        scores[pattern.intent] += keyword.split(' ').length;
-      }
-    }
-  }
-  
-  // Find the intent with the highest score
-  let bestIntent = INTENTS.GENERAL;
-  let bestScore = 0;
-  
-  for (const [intent, score] of Object.entries(scores)) {
-    if (score > bestScore) {
-      bestScore = score;
-      bestIntent = intent;
-    }
-  }
-  
-  return bestIntent;
-};
+... (existing detectIntent code)
 
 /**
  * Builds a context-aware prompt for the Gemini API

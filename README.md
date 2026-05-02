@@ -116,7 +116,7 @@ npm test
 ---
 
 ## 📸 Screenshots
-*(Add your app screenshots here)*
+![Application Features Showcase](./screenshots_showcase.png)
 
 ---
 

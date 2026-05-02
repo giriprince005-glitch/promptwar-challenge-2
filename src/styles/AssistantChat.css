@@ -274,3 +274,84 @@
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Proactive Recommendations */
+.recommendation-overlay {
+  position: sticky;
+  bottom: 1rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 100;
+  margin: 1rem 0;
+  pointer-events: none;
+}
+
+.recommendation-card {
+  pointer-events: auto;
+  width: 100%;
+  max-width: 400px;
+  background: rgba(255, 153, 51, 0.15);
+  border: 1px solid var(--saffron);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+.close-recommendation {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.2rem;
+  transition: color 0.2s;
+}
+
+.close-recommendation:hover {
+  color: var(--saffron);
+}
+
+.recommendation-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.recommendation-icon {
+  color: var(--saffron);
+  font-size: 1.2rem;
+}
+
+.recommendation-header h4 {
+  color: var(--saffron);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.recommendation-content h5 {
+  margin: 0 0 0.4rem 0;
+  font-size: 1.05rem;
+  color: var(--white);
+}
+
+.recommendation-content p {
+  margin: 0 0 1rem 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.recommendation-btn {
+  width: 100%;
+  justify-content: center;
+}

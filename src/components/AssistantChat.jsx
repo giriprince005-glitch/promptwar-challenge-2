@@ -1,4 +1,4 @@
-import { FaPaperPlane, FaRobot, FaUser, FaArrowRight } from 'react-icons/fa';
+import { FaPaperPlane, FaRobot, FaUser, FaArrowRight, FaLightbulb, FaTimes } from 'react-icons/fa';
 import { useChat } from '../hooks/useChat';
 import '../styles/AssistantChat.css';
 
@@ -10,6 +10,8 @@ export default function AssistantChat({ onNavigate }) {
     isLoading,
     apiKeyError,
     securityError,
+    activeRecommendation,
+    setActiveRecommendation,
     messagesEndRef,
     handleSend,
     handleKeyPress,
@@ -58,6 +60,7 @@ export default function AssistantChat({ onNavigate }) {
             </div>
           </div>
         ))}
+
         {isLoading && (
           <div className="message-wrapper assistant" aria-label="Assistant is typing">
             <div className="message-avatar" aria-hidden="true"><FaRobot /></div>
@@ -68,6 +71,36 @@ export default function AssistantChat({ onNavigate }) {
             </div>
           </div>
         )}
+        
+        {/* Proactive Recommendation Card */}
+        {activeRecommendation && (
+          <div className="recommendation-overlay animate-fade-in">
+            <div className="recommendation-card glass-panel">
+              <button 
+                className="close-recommendation" 
+                onClick={() => setActiveRecommendation(null)}
+                aria-label="Dismiss recommendation"
+              >
+                <FaTimes />
+              </button>
+              <div className="recommendation-header">
+                <FaLightbulb className="recommendation-icon" />
+                <h4>Smart Suggestion</h4>
+              </div>
+              <div className="recommendation-content">
+                <h5>{activeRecommendation.title}</h5>
+                <p>{activeRecommendation.message}</p>
+                <button 
+                  className="btn recommendation-btn"
+                  onClick={() => handleNavigate(activeRecommendation.component)}
+                >
+                  {activeRecommendation.actionLabel}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div ref={messagesEndRef} />
       </div>
 

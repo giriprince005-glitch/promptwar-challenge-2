@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { askAssistant } from '../services/geminiService';
+import { askAssistant, analyzeBehavior } from '../services/geminiService';
 import { logChatQuery } from '../services/firebaseService';
 import { sanitizeInput, validateInput, checkRateLimit } from '../utils/security';
 import { getCachedAIResponse, setCachedAIResponse } from '../services/cacheService';
@@ -20,6 +20,7 @@ export const useChat = (onNavigate) => {
   const [isLoading, setIsLoading] = useState(false);
   const [apiKeyError, setApiKeyError] = useState(false);
   const [securityError, setSecurityError] = useState(null);
+  const [activeRecommendation, setActiveRecommendation] = useState(null);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -33,11 +34,13 @@ export const useChat = (onNavigate) => {
   const handleNavigate = useCallback((component) => {
     if (onNavigate && component) {
       onNavigate(component);
+      setActiveRecommendation(null);
     }
   }, [onNavigate]);
 
   const handleSend = async () => {
     setSecurityError(null);
+    setActiveRecommendation(null);
     
     const sanitizedInput = sanitizeInput(input);
     if (!sanitizedInput) return;
@@ -68,7 +71,6 @@ export const useChat = (onNavigate) => {
     setIsLoading(true);
 
     if (cachedResponse) {
-      // Small delay to make it feel natural
       setTimeout(() => {
         setMessages(previousMessages => [
           ...previousMessages, 
@@ -80,12 +82,16 @@ export const useChat = (onNavigate) => {
             isCached: true
           }
         ]);
+        
+        // Analyze behavior for recommendation
+        const recommendation = analyzeBehavior(userMessage, cachedResponse.intent, messages);
+        if (recommendation) setActiveRecommendation(recommendation);
+        
         setIsLoading(false);
       }, 300);
       return;
     }
 
-    // Cooldown check only for actual API calls
     if (!checkRateLimit('chat_cooldown', 2000)) {
       setSecurityError('Please wait a moment before sending another message.');
       setIsLoading(false);
@@ -105,9 +111,11 @@ export const useChat = (onNavigate) => {
         }
       ]);
 
-      // Update Cache
+      // Analyze behavior for proactive recommendation
+      const recommendation = analyzeBehavior(userMessage, response.intent, messages);
+      if (recommendation) setActiveRecommendation(recommendation);
+
       setCachedAIResponse(userMessage, response);
-      
       logChatQuery(userMessage, response.intent, response.text);
     } catch (error) {
       console.error("Chat Hook Error:", error);
@@ -115,7 +123,7 @@ export const useChat = (onNavigate) => {
         ...previousMessages, 
         { 
           role: 'assistant', 
-          text: "Sorry, I encountered an error connecting to the knowledge base. Please try again later.",
+          text: "Sorry, I encountered an error. Please try again later.",
           intent: null,
           navigation: null,
         }
