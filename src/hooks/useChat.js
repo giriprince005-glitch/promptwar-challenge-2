@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { askAssistant } from '../services/geminiService';
+import { logChatQuery } from '../services/firebaseService';
 
 /**
  * Custom hook to manage chat state and interactions.
@@ -73,6 +74,9 @@ export const useChat = (onNavigate) => {
           navigation: response.navigation, 
         }
       ]);
+
+      // Log to Firebase (non-blocking)
+      logChatQuery(userMessage, response.intent, response.text);
     } catch (error) {
       console.error("Chat Hook Error:", error);
       setMessages(previousMessages => [

@@ -7,6 +7,7 @@ import AssistantChat from './components/AssistantChat';
 import Flashcards from './components/Flashcards';
 import ElectionTimeline from './components/ElectionTimeline';
 import ProcessWizard from './components/ProcessWizard';
+import PollingBoothFinder from './components/PollingBoothFinder';
 
 function App() {
   const [activeComponent, setActiveComponent] = useState('assistant');
@@ -23,6 +24,7 @@ function App() {
         {activeComponent === 'wizard' && <ProcessWizard />}
         {activeComponent === 'timeline' && <ElectionTimeline />}
         {activeComponent === 'flashcards' && <Flashcards />}
+        {activeComponent === 'booth' && <PollingBoothFinder />}
       </main>
       
       <Footer />

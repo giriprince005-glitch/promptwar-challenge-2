@@ -32,6 +32,12 @@ const Header = ({ activeComponent, setActiveComponent }) => {
         >
           Learn Terms
         </button>
+        <button 
+          className={`nav-btn ${activeComponent === 'booth' ? 'active' : ''}`}
+          onClick={() => setActiveComponent('booth')}
+        >
+          Find Booth
+        </button>
       </nav>
     </header>
   );

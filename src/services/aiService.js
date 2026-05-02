@@ -12,6 +12,7 @@ export const INTENTS = {
   RESULTS: 'results',
   LEARNING: 'learning',
   POLLING: 'polling',
+  BOOTH_FINDER: 'booth_finder',
   GENERAL: 'general',
 };
 
@@ -37,6 +38,11 @@ const MODULE_MAP = {
     component: 'wizard',
     label: '📋 Voter Guide',
     suggestion: 'The Voter Guide has detailed steps for polling day. Would you like to open it?',
+  },
+  [INTENTS.BOOTH_FINDER]: {
+    component: 'booth',
+    label: '🗺️ Find Booth',
+    suggestion: 'You can use our Polling Booth Finder to locate your nearest polling station on a map. Want to try it?',
   },
   [INTENTS.GENERAL]: null, // No module routing for general queries
 };
@@ -80,11 +86,21 @@ const INTENT_PATTERNS = [
   {
     intent: INTENTS.POLLING,
     keywords: [
-      'polling', 'polling booth', 'polling station', 'polling day',
-      'voting day', 'on election day', 'cast vote', 'how to cast',
+      'polling day', 'voting day', 'on election day',
+      'cast vote', 'how to cast',
       'documents needed', 'id proof', 'identity proof',
-      'booth', 'where to vote', 'find my booth',
       'ink', 'indelible ink', 'finger',
+    ],
+  },
+  {
+    intent: INTENTS.BOOTH_FINDER,
+    keywords: [
+      'polling booth', 'polling station', 'find booth', 'find my booth',
+      'where to vote', 'where is my booth', 'nearest booth',
+      'booth location', 'booth near me', 'nearby booth',
+      'locate booth', 'locate polling', 'booth address',
+      'booth finder', 'find polling station',
+      'where do i vote', 'my polling station',
     ],
   },
 ];
@@ -111,6 +127,14 @@ Include real-world context or examples where helpful.`,
 Focus your answer on what happens at the polling booth: identity verification, EVM usage, VVPAT verification, rules and regulations, do's and don'ts.
 Mention acceptable identity documents and the role of presiding officers.
 Structure your response as practical, actionable steps.`,
+
+  [INTENTS.BOOTH_FINDER]: `You are an expert on finding polling booths in India.
+Explain how voters can find their designated polling station. Mention the official ECI methods:
+1. The Voter Helpline App
+2. The National Voters' Service Portal (voters.eci.gov.in)
+3. The Voter Information Slip distributed before elections
+4. Contacting the local ERO/BLO office
+Also mention that this app has a built-in Polling Booth Finder using Google Maps.`,
 
   [INTENTS.GENERAL]: `You are a neutral, purely informational assistant focused EXCLUSIVELY on the Indian election process (Lok Sabha, Vidhan Sabha, Panchayats, etc.).
 Your goal is to explain mechanics, rules, timelines, and terminology.
