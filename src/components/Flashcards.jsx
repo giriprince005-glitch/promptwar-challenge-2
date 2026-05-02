@@ -62,12 +62,12 @@ export default function Flashcards() {
             className={`flashcard ${flippedCards.has(card.id) ? 'flipped' : ''}`}
             onClick={() => handleFlip(card.id)}
           >
-            <div className="flashcard-inner glass-panel">
-              <div className="flashcard-front">
+            <div className="flashcard-inner">
+              <div className="flashcard-front flashcard-face-style">
                 <h3>{card.term}</h3>
                 <div className="flip-icon"><FaSyncAlt /></div>
               </div>
-              <div className="flashcard-back">
+              <div className="flashcard-back flashcard-face-style">
                 <p>{card.definition}</p>
               </div>
             </div>

@@ -55,8 +55,16 @@
   border-radius: 16px;
 }
 
+.flashcard-face-style {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
 .flashcard-front {
-  background-color: transparent;
+  /* Styles inherited from flashcard-face-style */
 }
 
 .flashcard-front h3 {
