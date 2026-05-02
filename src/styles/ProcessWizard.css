@@ -1,0 +1,127 @@
+.wizard-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wizard-container .subtitle {
+  margin-bottom: 2rem;
+}
+
+.wizard-progress {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+/* Background line for progress */
+.wizard-progress::before {
+  content: '';
+  position: absolute;
+  top: 25px; /* Half of icon height */
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--border-color);
+  z-index: 0;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1;
+  width: 25%;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.progress-step:hover {
+  opacity: 0.8;
+}
+
+.step-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--bg-color);
+  border: 2px solid var(--border-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.8rem;
+  transition: all 0.3s ease;
+}
+
+.step-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-align: center;
+  transition: color 0.3s;
+}
+
+.progress-step.active .step-icon {
+  background-color: var(--saffron);
+  border-color: var(--saffron);
+  color: var(--bg-color);
+  box-shadow: 0 0 15px rgba(255, 153, 51, 0.4);
+}
+
+.progress-step.active .step-label {
+  color: var(--saffron);
+}
+
+.wizard-content {
+  width: 100%;
+  text-align: left;
+}
+
+.content-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.content-icon {
+  font-size: 2rem;
+  color: var(--saffron);
+}
+
+.wizard-content h3 {
+  margin: 0;
+}
+
+.wizard-content p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.wizard-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.5rem;
+}
+
+.wizard-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media screen and (max-width: 600px) {
+  .step-label {
+    display: none;
+  }
+}
