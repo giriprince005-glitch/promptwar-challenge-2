@@ -40,6 +40,28 @@ Built with a "Security-First" mindset to protect against common web vulnerabilit
 ## 🏗️ Technical Architecture
 The project follows a modular, scalable architecture inspired by industry best practices:
 
+```mermaid
+graph TD
+    A[User Input] --> B{Security Layer}
+    B -->|Sanitized| C[Intelligence Layer]
+    B -->|Blocked| D[Security Warning]
+    
+    C --> E[Intent Detection]
+    E --> F[Behavior Analysis]
+    
+    F --> G{Decision Engine}
+    G -->|Query| H[Gemini AI Engine]
+    G -->|Pattern| I[Smart Recommendation]
+    
+    H --> J[Response Generator]
+    I --> J
+    
+    J --> K[UI Layer - React 19]
+    K --> L[Voter Guide]
+    K --> M[Booth Finder]
+    K --> N[Timeline/Flashcards]
+```
+
 *   **UI Layer:** React 19 with a custom **Glassmorphism Design System** for a premium, modern feel.
 *   **Logic Layer:** Decoupled **Services & Hooks** architecture to separate business logic from UI components.
 *   **Intelligence Layer:** A decision-making engine that sits between the user and the Gemini API for intent routing.
