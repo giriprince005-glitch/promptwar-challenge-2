@@ -18,6 +18,17 @@
   font-size: 0.9rem;
 }
 
+.security-warning {
+  background-color: rgba(245, 158, 11, 0.2);
+  border: 1px solid #f59e0b;
+  color: #fbbf24;
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
 .chat-messages {
   flex: 1;
   overflow-y: auto;
@@ -151,27 +162,28 @@
 
 .suggested-questions {
   display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin-top: 1rem;
-  justify-content: center;
+  gap: 0.8rem;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+  scrollbar-width: none;
 }
 
-.suggested-questions span {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0.4rem 0.8rem;
-  border-radius: 16px;
-  font-size: 0.8rem;
-  color: var(--text-secondary);
+.suggestion-btn {
+  background: rgba(255, 153, 51, 0.1);
+  border: 1px solid rgba(255, 153, 51, 0.2);
+  color: var(--saffron);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  white-space: nowrap;
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.suggested-questions span:hover {
-  background: rgba(255, 153, 51, 0.1);
-  color: var(--saffron);
-  border-color: rgba(255, 153, 51, 0.3);
+.suggestion-btn:hover {
+  background: rgba(255, 153, 51, 0.2);
+  border-color: var(--saffron);
+  transform: translateY(-2px);
 }
 
 /* Typing Indicator */

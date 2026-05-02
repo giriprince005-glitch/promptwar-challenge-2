@@ -1,13 +1,23 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import './index.css';
 import './styles/App.css';
 import Header from './components/common/Header';
 import Footer from './components/common/Footer';
 import AssistantChat from './components/AssistantChat';
-import Flashcards from './components/Flashcards';
-import ElectionTimeline from './components/ElectionTimeline';
-import ProcessWizard from './components/ProcessWizard';
-import PollingBoothFinder from './components/PollingBoothFinder';
+
+// Lazy load modules for better performance
+const Flashcards = lazy(() => import('./components/Flashcards'));
+const ElectionTimeline = lazy(() => import('./components/ElectionTimeline'));
+const ProcessWizard = lazy(() => import('./components/ProcessWizard'));
+const PollingBoothFinder = lazy(() => import('./components/PollingBoothFinder'));
+
+// Loading component for Suspense
+const LoadingModule = () => (
+  <div className="module-loading-spinner">
+    <div className="spinner"></div>
+    <p>Loading module...</p>
+  </div>
+);
 
 function App() {
   const [activeComponent, setActiveComponent] = useState('assistant');
@@ -20,11 +30,13 @@ function App() {
       />
 
       <main className="main-content animate-fade-in" style={{ animationDelay: '0.2s' }}>
-        {activeComponent === 'assistant' && <AssistantChat onNavigate={setActiveComponent} />}
-        {activeComponent === 'wizard' && <ProcessWizard />}
-        {activeComponent === 'timeline' && <ElectionTimeline />}
-        {activeComponent === 'flashcards' && <Flashcards />}
-        {activeComponent === 'booth' && <PollingBoothFinder />}
+        <Suspense fallback={<LoadingModule />}>
+          {activeComponent === 'assistant' && <AssistantChat onNavigate={setActiveComponent} />}
+          {activeComponent === 'wizard' && <ProcessWizard />}
+          {activeComponent === 'timeline' && <ElectionTimeline />}
+          {activeComponent === 'flashcards' && <Flashcards />}
+          {activeComponent === 'booth' && <PollingBoothFinder />}
+        </Suspense>
       </main>
       
       <Footer />

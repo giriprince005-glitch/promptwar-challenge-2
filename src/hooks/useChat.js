@@ -1,12 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { askAssistant } from '../services/geminiService';
 import { logChatQuery } from '../services/firebaseService';
+import { sanitizeInput, validateInput, checkRateLimit } from '../utils/security';
+import { getCachedAIResponse, setCachedAIResponse } from '../services/cacheService';
 
 /**
  * Custom hook to manage chat state and interactions.
- * Now supports context-aware responses with navigation suggestions.
- * 
- * @param {function} onNavigate - Callback to navigate to a different app module
  */
 export const useChat = (onNavigate) => {
   const [messages, setMessages] = useState([
@@ -20,6 +19,7 @@ export const useChat = (onNavigate) => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [apiKeyError, setApiKeyError] = useState(false);
+  const [securityError, setSecurityError] = useState(null);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -30,39 +30,69 @@ export const useChat = (onNavigate) => {
     scrollToBottom();
   }, [messages]);
 
-  /**
-   * Navigate to a module suggested by the AI
-   */
   const handleNavigate = useCallback((component) => {
     if (onNavigate && component) {
       onNavigate(component);
     }
   }, [onNavigate]);
 
-  /**
-   * Send a message through the intent-aware pipeline
-   */
   const handleSend = async () => {
-    if (!input.trim()) return;
+    setSecurityError(null);
+    
+    const sanitizedInput = sanitizeInput(input);
+    if (!sanitizedInput) return;
+
+    const validation = validateInput(sanitizedInput);
+    if (!validation.isValid) {
+      setSecurityError(validation.error);
+      return;
+    }
 
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-    
     if (!apiKey) {
       setApiKeyError(true);
       return;
     }
 
     setApiKeyError(false);
-    const userMessage = input.trim();
+    const userMessage = sanitizedInput;
     setInput('');
+    
+    // Check Cache first
+    const cachedResponse = getCachedAIResponse(userMessage);
+    
     setMessages(previousMessages => [
       ...previousMessages, 
       { role: 'user', text: userMessage, intent: null, navigation: null }
     ]);
     setIsLoading(true);
 
+    if (cachedResponse) {
+      // Small delay to make it feel natural
+      setTimeout(() => {
+        setMessages(previousMessages => [
+          ...previousMessages, 
+          { 
+            role: 'assistant', 
+            text: cachedResponse.text,
+            intent: cachedResponse.intent,
+            navigation: cachedResponse.navigation, 
+            isCached: true
+          }
+        ]);
+        setIsLoading(false);
+      }, 300);
+      return;
+    }
+
+    // Cooldown check only for actual API calls
+    if (!checkRateLimit('chat_cooldown', 2000)) {
+      setSecurityError('Please wait a moment before sending another message.');
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      // askAssistant now returns { text, intent, navigation }
       const response = await askAssistant(userMessage, apiKey);
       
       setMessages(previousMessages => [
@@ -75,7 +105,9 @@ export const useChat = (onNavigate) => {
         }
       ]);
 
-      // Log to Firebase (non-blocking)
+      // Update Cache
+      setCachedAIResponse(userMessage, response);
+      
       logChatQuery(userMessage, response.intent, response.text);
     } catch (error) {
       console.error("Chat Hook Error:", error);
@@ -106,6 +138,7 @@ export const useChat = (onNavigate) => {
     setInput,
     isLoading,
     apiKeyError,
+    securityError,
     messagesEndRef,
     handleSend,
     handleKeyPress,

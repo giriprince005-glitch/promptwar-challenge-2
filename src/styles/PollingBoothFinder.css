@@ -172,6 +172,16 @@
   padding: 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  width: 100%;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  font-family: inherit;
+}
+
+.booth-result-card:focus-visible {
+  outline: 2px solid var(--saffron);
+  outline-offset: 2px;
 }
 
 .booth-result-card:hover {

@@ -1,113 +1,101 @@
-# 🇮🇳 India-Elects
+# 🇮🇳 India Elects: Context-Aware Election Assistant
 
-An interactive and neutral **Election Information Assistant** designed to guide individuals through the world's largest democratic process. This application is built with React and deployed on Google Cloud Run, powered by the Gemini API to provide intelligent, conversational responses.
+![India Elects Banner](./india_elects_banner_1777740782672.png)
 
-![Project Status](https://img.shields.io/badge/Status-Active-success)
-![Platform](https://img.shields.io/badge/Platform-GCP_Cloud_Run-blue)
-![React](https://img.shields.io/badge/React-19.0-61dafb?logo=react&logoColor=black)
+## 🌟 Overview
+**India Elects** is a state-of-the-art, AI-powered interactive platform designed to guide citizens through the world's largest democratic process. Built with a focus on **context-aware intelligence**, **production-level security**, and **inclusive design**, it transforms the complex election landscape into a seamless, user-friendly experience.
 
----
-
-## 🌟 Features
-
-India-Elects is divided into four main interactive modules:
-
-1. **AI Assistant (`AssistantChat`)**: A conversational bot powered by Gemini, designed to answer specific questions regarding election dates, voter eligibility, and polling stations in a strictly neutral and informational manner.
-2. **Voter Guide (`ProcessWizard`)**: A step-by-step wizard guiding new voters through the registration and voting process.
-3. **Timeline (`ElectionTimeline`)**: A chronological view of key election events, phases, and result declarations.
-4. **Learn Terms (`Flashcards`)**: Interactive flashcards to help users familiarize themselves with common electoral terminology (e.g., EVM, VVPAT, Model Code of Conduct).
+Whether you are a first-time voter looking for registration steps or a seasoned citizen tracking election timelines, India Elects provides accurate, neutral, and real-time guidance.
 
 ---
 
-## 🏗️ Architecture & Component Diagrams
+## 🚀 Key Features
 
-### System Architecture
+### 🧠 Context-Aware AI Assistant
+*   **Intent Detection:** Automatically identifies user queries (Registration, Results, Polling, Terms) using a weighted keyword-scoring engine.
+*   **Smart Routing:** The AI doesn't just talk—it guides. It suggests the most relevant app module (Timeline, Voter Guide, etc.) based on your conversation.
+*   **Neutrality-First:** Powered by Gemini AI with custom prompt engineering to ensure 100% political neutrality and factual accuracy.
 
-The application is a containerized frontend deployed seamlessly on Google Cloud Run, leveraging the Gemini API for its intelligent chat capabilities.
+### 🗺️ Polling Booth Finder
+*   **Interactive Mapping:** Integrated with Google Maps API to help users find their nearest polling station.
+*   **Geolocation Support:** One-click "Find My Location" for instant results.
+*   **Directions & Data:** Get precise distances and turn-by-turn directions to your designated booth.
 
-```mermaid
-graph TD
-    User([User / Browser]) -->|HTTPS Request| CloudRun[Google Cloud Run]
-    
-    subgraph GCP [Google Cloud Platform]
-        CloudRun -->|Serves| ReactApp[React + Vite Frontend]
-        ReactApp -.->|API Calls| Gemini[Gemini API]
-    end
+### 📚 Learning & Progress Modules
+*   **Voter Guide (Wizard):** A step-by-step interactive walkthrough for the registration process.
+*   **Election Timeline:** A visual, horizontal scrollable journey through the election cycle.
+*   **Flashcards:** Interactive cards to learn complex electoral terminology (EVM, VVPAT, NOTA).
 
-    classDef gcp fill:#f2f6fa,stroke:#4285f4,stroke-width:2px,color:#333
-    classDef external fill:#f9f9f9,stroke:#666,stroke-width:2px,color:#333
-    
-    class GCP gcp
-    class User,Gemini external
+---
+
+## 🛡️ Production-Grade Security
+Built with a "Security-First" mindset to protect against common web vulnerabilities and AI misuse:
+*   **Input Sanitization:** Automated stripping of HTML/Script tags to prevent XSS.
+*   **Prompt Injection Protection:** A robust validation layer that detects and blocks "jailbreak" attempts.
+*   **Rate Limiting:** Intelligent client-side cooldowns to prevent API quota abuse and spam.
+*   **Environment Isolation:** Zero hardcoded keys. All sensitive credentials are managed via secure `.env` variables.
+
+---
+
+## 🏗️ Technical Architecture
+The project follows a modular, scalable architecture inspired by industry best practices:
+
+*   **UI Layer:** React 19 with a custom **Glassmorphism Design System** for a premium, modern feel.
+*   **Logic Layer:** Decoupled **Services & Hooks** architecture to separate business logic from UI components.
+*   **Intelligence Layer:** A decision-making engine that sits between the user and the Gemini API for intent routing.
+*   **Services Layer:** Dedicated modules for Google Maps (Geocoding/Places), Firebase (Logging), and AI interactions.
+
+---
+
+## 🛠️ Tech Stack
+*   **Frontend:** React 19, Vite
+*   **AI Engine:** Google Gemini Pro (via `@google/genai`)
+*   **Maps Service:** Google Maps JavaScript & Places API
+*   **Database/Logs:** Firebase Firestore
+*   **Testing:** Vitest, React Testing Library
+*   **Styling:** Vanilla CSS (Custom tokens & animations)
+
+---
+
+## 🧪 Testing & Quality
+The project includes a comprehensive test suite to ensure stability:
+*   **Unit Tests:** Validating intent detection, security sanitization, and logic.
+*   **Component Tests:** Verifying navigation, accessibility, and UI rendering.
+*   **Accessibility:** WCAG 2.1 compliant with full ARIA support and keyboard navigation.
+
+Run the tests with:
+```bash
+npm test
 ```
 
-### Component Structure
-
-A breakdown of the React components that make up the user interface:
-
-```mermaid
-graph TD
-    App[App.jsx] --> Header[Header / Navigation]
-    App --> Main[Main Content Area]
-    App --> Footer[Footer]
-
-    Main -->|State: activeTab| Router{Tab Switcher}
-
-    Router -->|'assistant'| Assistant[AssistantChat.jsx]
-    Router -->|'wizard'| Wizard[ProcessWizard.jsx]
-    Router -->|'timeline'| Timeline[ElectionTimeline.jsx]
-    Router -->|'flashcards'| Flashcards[Flashcards.jsx]
-
-    classDef component fill:#e1f5fe,stroke:#039be5,stroke-width:2px,color:#000
-    class App,Header,Main,Footer,Assistant,Wizard,Timeline,Flashcards component
-```
-
 ---
 
-## 🚀 Local Development
+## 📦 Getting Started
 
-This template provides a minimal setup to get React working in Vite with Hot Module Replacement (HMR).
-
-### Prerequisites
-- Node.js (v18+)
-- A Gemini API Key (Set up your `.env` file with `VITE_GEMINI_API_KEY`)
-
-### Setup Instructions
-
-1. **Clone the repository:**
+1. **Clone & Install:**
    ```bash
    git clone https://github.com/onemoremohit/India-Elects.git
    cd India-Elects
-   ```
-
-2. **Install dependencies:**
-   ```bash
    npm install
    ```
 
-3. **Start the development server:**
+2. **Environment Setup:**
+   Create a `.env` file and add your keys:
+   ```env
+   VITE_GEMINI_API_KEY=your_gemini_key
+   VITE_GOOGLE_MAPS_API_KEY=your_maps_key
+   ```
+
+3. **Run Locally:**
    ```bash
    npm run dev
    ```
 
-4. **Build for production:**
-   ```bash
-   npm run build
-   ```
+---
+
+## 📸 Screenshots
+*(Add your app screenshots here)*
 
 ---
 
-## ☁️ Deployment (Google Cloud Run)
-
-This project includes a `Dockerfile` and `nginx.conf` for optimized production serving.
-
-```bash
-# Set your Google Cloud project
-gcloud config set project [YOUR_PROJECT_ID]
-
-# Deploy directly from source
-gcloud run deploy promptwar2 \
-  --source . \
-  --region us-central1 \
-  --allow-unauthenticated
-```
+*Made with ❤️ for the world's largest democracy.*

@@ -3,6 +3,8 @@ import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-map
 import { FaMapMarkerAlt, FaSearch, FaCrosshairs, FaDirections } from 'react-icons/fa';
 import { geocodeAddress, searchPollingStations, getCurrentLocation } from '../services/mapsService';
 import { logBoothSearch } from '../services/firebaseService';
+import { sanitizeInput, checkRateLimit } from '../utils/security';
+import { getCachedGeoResult, setCachedGeoResult } from '../services/cacheService';
 import '../styles/PollingBoothFinder.css';
 
 const LIBRARIES = ['places'];
@@ -60,8 +62,15 @@ export default function PollingBoothFinder() {
   }, []);
 
   const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
+    const sanitizedSearch = sanitizeInput(searchQuery);
+    if (!sanitizedSearch) return;
     if (!mapRef.current) return;
+
+    // Rate limiting to prevent API quota abuse
+    if (!checkRateLimit('maps_search_cooldown', 2000)) {
+      setErrorMessage('Please wait a moment before searching again.');
+      return;
+    }
 
     setIsSearching(true);
     setErrorMessage('');
@@ -69,8 +78,13 @@ export default function PollingBoothFinder() {
     setSelectedStation(null);
 
     try {
-      const geocoder = new window.google.maps.Geocoder();
-      const location = await geocodeAddress(geocoder, searchQuery + ', India');
+      let location = getCachedGeoResult(sanitizedSearch);
+      
+      if (!location) {
+        const geocoder = new window.google.maps.Geocoder();
+        location = await geocodeAddress(geocoder, sanitizedSearch + ', India');
+        setCachedGeoResult(sanitizedSearch, location);
+      }
       
       setSearchLocation(location);
       setMapCenter(location);
@@ -178,9 +192,9 @@ export default function PollingBoothFinder() {
       <p className="subtitle">Enter your address or use your current location to find nearby polling stations.</p>
 
       {/* Search Bar */}
-      <div className="booth-search-bar glass-panel">
+      <div className="booth-search-bar glass-panel" role="search" aria-label="Polling booth search">
         <div className="booth-search-input-group">
-          <FaMapMarkerAlt className="search-icon" />
+          <FaMapMarkerAlt className="search-icon" aria-hidden="true" />
           <input
             type="text"
             value={searchQuery}
@@ -188,33 +202,36 @@ export default function PollingBoothFinder() {
             onKeyDown={handleKeyPress}
             placeholder="Enter your area, city, or pincode..."
             disabled={isSearching || isLocating}
+            aria-label="Search location for polling booths"
           />
         </div>
         <button 
           className="btn booth-search-btn" 
           onClick={handleSearch} 
           disabled={isSearching || !searchQuery.trim()}
+          aria-label={isSearching ? 'Searching...' : 'Search for polling booths'}
         >
-          {isSearching ? 'Searching...' : <><FaSearch /> Search</>}
+          {isSearching ? 'Searching...' : <><FaSearch aria-hidden="true" /> Search</>}
         </button>
         <button 
           className="btn btn-secondary booth-location-btn" 
           onClick={handleUseMyLocation}
           disabled={isLocating || isSearching}
+          aria-label={isLocating ? 'Locating...' : 'Use my current location'}
         >
-          {isLocating ? 'Locating...' : <><FaCrosshairs /> Use My Location</>}
+          {isLocating ? 'Locating...' : <><FaCrosshairs aria-hidden="true" /> Use My Location</>}
         </button>
       </div>
 
       {/* Error Message */}
       {errorMessage && (
-        <div className="booth-error-message">{errorMessage}</div>
+        <div className="booth-error-message" role="alert">{errorMessage}</div>
       )}
 
       {/* Map and Results Layout */}
       <div className="booth-content-layout">
         {/* Map */}
-        <div className="booth-map-container glass-panel">
+        <div className="booth-map-container glass-panel" aria-label="Interactive map showing polling booths">
           <GoogleMap
             mapContainerStyle={mapContainerStyle}
             center={mapCenter}
@@ -248,6 +265,7 @@ export default function PollingBoothFinder() {
                   ),
                   scaledSize: new window.google.maps.Size(28, 28),
                 }}
+                title={station.name}
               />
             ))}
 
@@ -257,8 +275,8 @@ export default function PollingBoothFinder() {
                 position={selectedStation.location}
                 onCloseClick={() => setSelectedStation(null)}
               >
-                <div className="booth-info-window">
-                  <h4>{selectedStation.name}</h4>
+                <div className="booth-info-window" role="dialog" aria-labelledby="booth-title">
+                  <h4 id="booth-title">{selectedStation.name}</h4>
                   <p>{selectedStation.address}</p>
                   <p><strong>{selectedStation.distance}</strong> away</p>
                 </div>
@@ -268,13 +286,13 @@ export default function PollingBoothFinder() {
         </div>
 
         {/* Results List */}
-        <div className="booth-results-panel">
+        <div className="booth-results-panel" role="region" aria-label="Polling booth search results">
           {hasSearched && stations.length > 0 && (
             <>
-              <h3>📍 {stations.length} Station{stations.length > 1 ? 's' : ''} Found</h3>
-              <div className="booth-results-list">
+              <h3 aria-live="polite">📍 {stations.length} Station{stations.length > 1 ? 's' : ''} Found</h3>
+              <div className="booth-results-list" role="list">
                 {stations.map((station) => (
-                  <div 
+                  <button 
                     key={station.id} 
                     className={`booth-result-card glass-panel ${selectedStation?.id === station.id ? 'selected' : ''}`}
                     onClick={() => {
@@ -282,23 +300,29 @@ export default function PollingBoothFinder() {
                       setMapCenter(station.location);
                       setMapZoom(15);
                     }}
+                    role="listitem"
+                    aria-pressed={selectedStation?.id === station.id}
+                    aria-label={`${station.name}, ${station.distance} away. Address: ${station.address}`}
                   >
                     <div className="booth-result-info">
                       <h4>{station.name}</h4>
                       <p className="booth-result-address">{station.address}</p>
                       <span className="booth-result-distance">{station.distance}</span>
                     </div>
-                    <button 
+                    <div 
                       className="booth-directions-btn"
                       onClick={(e) => {
                         e.stopPropagation();
                         openDirections(station);
                       }}
-                      title="Get Directions"
+                      role="button"
+                      aria-label={`Get directions to ${station.name}`}
+                      tabIndex={0}
+                      onKeyDown={(e) => { if (e.key === 'Enter') openDirections(station); }}
                     >
-                      <FaDirections />
-                    </button>
-                  </div>
+                      <FaDirections aria-hidden="true" />
+                    </div>
+                  </button>
                 ))}
               </div>
             </>

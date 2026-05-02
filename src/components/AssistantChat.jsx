@@ -9,6 +9,7 @@ export default function AssistantChat({ onNavigate }) {
     setInput,
     isLoading,
     apiKeyError,
+    securityError,
     messagesEndRef,
     handleSend,
     handleKeyPress,
@@ -22,11 +23,17 @@ export default function AssistantChat({ onNavigate }) {
           ⚠️ Missing Gemini API Key. Please add VITE_GEMINI_API_KEY to your .env file.
         </div>
       )}
+
+      {securityError && (
+        <div className="security-warning">
+          ⚠️ {securityError}
+        </div>
+      )}
       
-      <div className="chat-messages">
+      <div className="chat-messages" aria-live="polite" aria-relevant="additions">
         {messages.map((message, index) => (
-          <div key={index} className={`message-wrapper ${message.role}`}>
-            <div className="message-avatar">
+          <div key={index} className={`message-wrapper ${message.role}`} role="log">
+            <div className="message-avatar" aria-hidden="true">
               {message.role === 'assistant' ? <FaRobot /> : <FaUser />}
             </div>
             <div className="message-content-wrapper">
@@ -36,23 +43,24 @@ export default function AssistantChat({ onNavigate }) {
               
               {/* Navigation Suggestion Card */}
               {message.role === 'assistant' && message.navigation && (
-                <div 
+                <button 
                   className="navigation-card"
                   onClick={() => handleNavigate(message.navigation.component)}
+                  aria-label={`Open ${message.navigation.label}: ${message.navigation.suggestion}`}
                 >
                   <div className="navigation-card-content">
-                    <span className="navigation-card-label">{message.navigation.label}</span>
+                    <span className="navigation-card-label" aria-hidden="true">{message.navigation.label}</span>
                     <p className="navigation-card-text">{message.navigation.suggestion}</p>
                   </div>
-                  <FaArrowRight className="navigation-card-arrow" />
-                </div>
+                  <FaArrowRight className="navigation-card-arrow" aria-hidden="true" />
+                </button>
               )}
             </div>
           </div>
         ))}
         {isLoading && (
-          <div className="message-wrapper assistant">
-            <div className="message-avatar"><FaRobot /></div>
+          <div className="message-wrapper assistant" aria-label="Assistant is typing">
+            <div className="message-avatar" aria-hidden="true"><FaRobot /></div>
             <div className="message-content-wrapper">
               <div className="message-bubble typing-indicator">
                 <span></span><span></span><span></span>
@@ -71,17 +79,34 @@ export default function AssistantChat({ onNavigate }) {
           placeholder="Ask about Form 6, EVMs, or polling rules..."
           disabled={isLoading}
           rows={1}
+          aria-label="Message India Elects Assistant"
         />
-        <button className="send-btn" onClick={handleSend} disabled={isLoading || !input.trim()}>
+        <button 
+          className="send-btn" 
+          onClick={handleSend} 
+          disabled={isLoading || !input.trim()}
+          aria-label="Send message"
+        >
           <FaPaperPlane />
         </button>
       </div>
       
-      <div className="suggested-questions">
-        <span onClick={() => setInput("How do I register to vote online?")}>How do I register?</span>
-        <span onClick={() => setInput("What documents do I need on polling day?")}>Required documents?</span>
-        <span onClick={() => setInput("Explain how a VVPAT machine works.")}>What is VVPAT?</span>
-        <span onClick={() => setInput("When are the next elections?")}>Election schedule?</span>
+      <div className="suggested-questions" role="group" aria-label="Suggested questions">
+        {[
+          { text: "How do I register to vote online?", label: "How do I register?" },
+          { text: "What documents do I need on polling day?", label: "Required documents?" },
+          { text: "Explain how a VVPAT machine works.", label: "What is VVPAT?" },
+          { text: "When are the next elections?", label: "Election schedule?" }
+        ].map((q, i) => (
+          <button 
+            key={i}
+            className="suggestion-btn"
+            onClick={() => setInput(q.text)}
+            aria-label={`Ask: ${q.text}`}
+          >
+            {q.label}
+          </button>
+        ))}
       </div>
     </div>
   );
