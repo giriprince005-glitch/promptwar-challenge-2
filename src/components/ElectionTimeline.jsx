@@ -1,32 +1,5 @@
+import { timelineData } from '../utils/constants';
 import '../styles/ElectionTimeline.css';
-
-const timelineData = [
-  {
-    phase: "Phase 1: Announcement",
-    title: "Notification of Election",
-    description: "The Election Commission of India (ECI) announces the election schedule, and the Model Code of Conduct comes into effect immediately."
-  },
-  {
-    phase: "Phase 2: Nominations",
-    title: "Filing & Scrutiny",
-    description: "Candidates file their nomination papers. The ECI scrutinizes them for validity, followed by a window for withdrawal of candidatures."
-  },
-  {
-    phase: "Phase 3: Campaigning",
-    title: "Public Outreach",
-    description: "Candidates and parties campaign. This period strictly ends 48 hours before the polling begins (the 'silence period')."
-  },
-  {
-    phase: "Phase 4: Polling Day",
-    title: "Casting Votes",
-    description: "Voters cast their votes using Electronic Voting Machines (EVMs) under strict security and ECI observation."
-  },
-  {
-    phase: "Phase 5: Counting",
-    title: "Results Declaration",
-    description: "Votes are counted under heavy security. The results are officially declared by the Returning Officer."
-  }
-];
 
 export default function ElectionTimeline() {
   return (

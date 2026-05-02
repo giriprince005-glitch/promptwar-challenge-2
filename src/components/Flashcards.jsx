@@ -1,39 +1,7 @@
 import { useState } from 'react';
 import { FaSyncAlt } from 'react-icons/fa';
+import { cardData } from '../utils/constants';
 import '../styles/Flashcards.css';
-
-const cardData = [
-  {
-    id: 1,
-    term: "EVM",
-    definition: "Electronic Voting Machine. Used in Indian elections to record votes securely without paper ballots. It consists of a Control Unit and a Ballot Unit."
-  },
-  {
-    id: 2,
-    term: "VVPAT",
-    definition: "Voter Verifiable Paper Audit Trail. A machine attached to the EVM that prints a paper slip allowing voters to verify their vote was cast correctly."
-  },
-  {
-    id: 3,
-    term: "NOTA",
-    definition: "None Of The Above. A ballot option allowing voters to express dissatisfaction with all the candidates listed in the election."
-  },
-  {
-    id: 4,
-    term: "Model Code of Conduct (MCC)",
-    definition: "A set of guidelines issued by the Election Commission of India to regulate political parties and candidates prior to elections to ensure free and fair elections."
-  },
-  {
-    id: 5,
-    term: "Lok Sabha",
-    definition: "The lower house of India's bicameral Parliament. Members are elected by direct adult suffrage. Also known as the House of the People."
-  },
-  {
-    id: 6,
-    term: "Election Commission of India (ECI)",
-    definition: "An autonomous constitutional authority responsible for administering election processes in India at national, state, and district levels."
-  }
-];
 
 export default function Flashcards() {
   const [flippedCards, setFlippedCards] = useState(new Set());

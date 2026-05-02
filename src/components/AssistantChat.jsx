@@ -1,76 +1,19 @@
-import { useState, useRef, useEffect } from 'react';
-import { GoogleGenAI } from '@google/genai';
-import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa';
+import { FaPaperPlane, FaRobot, FaUser, FaArrowRight } from 'react-icons/fa';
+import { useChat } from '../hooks/useChat';
 import '../styles/AssistantChat.css';
 
-const SYSTEM_PROMPT = `You are a neutral, purely informational assistant focused EXCLUSIVELY on the Indian election process (Lok Sabha, Vidhan Sabha, Panchayats, etc.).
-Your goal is to explain mechanics, rules, timelines, and terminology (like EVM, VVPAT, Model Code of Conduct, Form 6).
-CRITICAL RULES:
-1. NEVER express a political opinion.
-2. NEVER evaluate, endorse, or criticize any specific political party or candidate.
-3. If asked about a subjective political topic or a specific politician, reply: "I can only provide factual information about the Indian election process and rules. I cannot discuss specific parties or political opinions."
-4. Keep answers concise, easy to read, and step-by-step if applicable.`;
-
-export default function AssistantChat() {
-  const [messages, setMessages] = useState([
-    { role: 'assistant', text: "Namaste! I am the India Elects Assistant. Ask me anything about voter registration, polling day rules, EVMs, or the general election process in India." }
-  ]);
-  const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [apiKeyError, setApiKeyError] = useState(false);
-  const messagesEndRef = useRef(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const handleSend = async () => {
-    if (!input.trim()) return;
-
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-    
-    if (!apiKey) {
-      setApiKeyError(true);
-      return;
-    }
-
-    setApiKeyError(false);
-    const userMessage = input.trim();
-    setInput('');
-    setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
-    setIsLoading(true);
-
-    try {
-      const ai = new GoogleGenAI({ apiKey: apiKey });
-      
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: [
-          { role: 'user', parts: [{ text: SYSTEM_PROMPT + "\\n\\nUser question: " + userMessage }] }
-        ]
-      });
-
-      const replyText = response.text || "I'm sorry, I couldn't process that request.";
-      setMessages(prev => [...prev, { role: 'assistant', text: replyText }]);
-
-    } catch (error) {
-      console.error("Error calling Gemini API:", error);
-      setMessages(prev => [...prev, { role: 'assistant', text: "Sorry, I encountered an error connecting to the knowledge base. Please try again later." }]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
+export default function AssistantChat({ onNavigate }) {
+  const {
+    messages,
+    input,
+    setInput,
+    isLoading,
+    apiKeyError,
+    messagesEndRef,
+    handleSend,
+    handleKeyPress,
+    handleNavigate,
+  } = useChat(onNavigate);
 
   return (
     <div className="chat-container glass-panel">
@@ -81,21 +24,39 @@ export default function AssistantChat() {
       )}
       
       <div className="chat-messages">
-        {messages.map((msg, index) => (
-          <div key={index} className={`message-wrapper ${msg.role}`}>
+        {messages.map((message, index) => (
+          <div key={index} className={`message-wrapper ${message.role}`}>
             <div className="message-avatar">
-              {msg.role === 'assistant' ? <FaRobot /> : <FaUser />}
+              {message.role === 'assistant' ? <FaRobot /> : <FaUser />}
             </div>
-            <div className={`message-bubble ${msg.role}`}>
-              {msg.text}
+            <div className="message-content-wrapper">
+              <div className={`message-bubble ${message.role}`}>
+                {message.text}
+              </div>
+              
+              {/* Navigation Suggestion Card */}
+              {message.role === 'assistant' && message.navigation && (
+                <div 
+                  className="navigation-card"
+                  onClick={() => handleNavigate(message.navigation.component)}
+                >
+                  <div className="navigation-card-content">
+                    <span className="navigation-card-label">{message.navigation.label}</span>
+                    <p className="navigation-card-text">{message.navigation.suggestion}</p>
+                  </div>
+                  <FaArrowRight className="navigation-card-arrow" />
+                </div>
+              )}
             </div>
           </div>
         ))}
         {isLoading && (
           <div className="message-wrapper assistant">
             <div className="message-avatar"><FaRobot /></div>
-            <div className="message-bubble typing-indicator">
-              <span></span><span></span><span></span>
+            <div className="message-content-wrapper">
+              <div className="message-bubble typing-indicator">
+                <span></span><span></span><span></span>
+              </div>
             </div>
           </div>
         )}
@@ -120,6 +81,7 @@ export default function AssistantChat() {
         <span onClick={() => setInput("How do I register to vote online?")}>How do I register?</span>
         <span onClick={() => setInput("What documents do I need on polling day?")}>Required documents?</span>
         <span onClick={() => setInput("Explain how a VVPAT machine works.")}>What is VVPAT?</span>
+        <span onClick={() => setInput("When are the next elections?")}>Election schedule?</span>
       </div>
     </div>
   );
