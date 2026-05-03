@@ -1,10 +1,10 @@
 import React from 'react';
-import { FaRobot, FaArrowRight } from 'react-icons/fa';
 import { useChat } from '../hooks/useChat';
-import ChatMessage from './chat/ChatMessage';
 import ChatInput from './chat/ChatInput';
 import ChatSuggestions from './chat/ChatSuggestions';
 import RecommendationCard from './chat/RecommendationCard';
+import TypingIndicator from './chat/TypingIndicator';
+import MessageGroup from './chat/MessageGroup';
 import '../styles/AssistantChat.css';
 
 /**
@@ -47,37 +47,11 @@ export default function AssistantChat({ onNavigate }) {
       
       <div className="chat-messages" aria-live="polite" aria-relevant="additions">
         {messages.map((message, index) => (
-          <div key={index} className="message-group">
-            <ChatMessage message={message} />
-            
-            {/* Contextual Module Navigation */}
-            {message.role === 'assistant' && message.navigation && (
-              <button 
-                className="navigation-card"
-                onClick={() => handleNavigate(message.navigation.component)}
-                aria-label={`Open ${message.navigation.label}: ${message.navigation.suggestion}`}
-              >
-                <div className="navigation-card-content">
-                  <span className="navigation-card-label" aria-hidden="true">{message.navigation.label}</span>
-                  <p className="navigation-card-text">{message.navigation.suggestion}</p>
-                </div>
-                <FaArrowRight className="navigation-card-arrow" aria-hidden="true" />
-              </button>
-            )}
-          </div>
+          <MessageGroup key={index} message={message} onNavigate={handleNavigate} />
         ))}
 
         {/* Typing Indicator */}
-        {isLoading && (
-          <div className="message-wrapper assistant" aria-label="Assistant is thinking">
-            <div className="message-avatar" aria-hidden="true"><FaRobot /></div>
-            <div className="message-content-wrapper">
-              <div className="message-bubble typing-indicator">
-                <span></span><span></span><span></span>
-              </div>
-            </div>
-          </div>
-        )}
+        {isLoading && <TypingIndicator />}
         
         {/* Proactive Recommendation Card */}
         <RecommendationCard 

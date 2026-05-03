@@ -19,15 +19,13 @@ export default function ProcessWizard() {
       <h2>Your Voting Journey</h2>
       <p className="subtitle">A step-by-step guide to exercising your democratic right.</p>
 
-      <div className="wizard-progress" role="tablist" aria-label="Registration Steps">
+      <div className="wizard-progress" aria-label="Registration Steps">
         {steps.map((step, index) => (
           <button 
             key={step.id} 
             className={`progress-step ${index <= currentStep ? 'active' : ''}`}
             onClick={() => setCurrentStep(index)}
-            role="tab"
-            aria-selected={index === currentStep}
-            aria-controls={`step-panel-${index}`}
+            aria-current={index === currentStep ? 'step' : undefined}
             id={`step-tab-${index}`}
             aria-label={`Step ${index + 1}: ${step.title}`}
           >
@@ -40,9 +38,7 @@ export default function ProcessWizard() {
       <div 
         className="wizard-content glass-panel animate-fade-in" 
         key={currentStep}
-        role="tabpanel"
         id={`step-panel-${currentStep}`}
-        aria-labelledby={`step-tab-${currentStep}`}
         aria-live="polite"
       >
         <div className="content-header">

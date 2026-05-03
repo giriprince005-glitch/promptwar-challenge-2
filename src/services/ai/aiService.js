@@ -47,65 +47,7 @@ const MODULE_MAP = {
   [INTENTS.GENERAL]: null, // No module routing for general queries
 };
 
-// ─── Intent Detection Patterns ──────────────────────────────────
-// Each pattern set maps keywords/phrases to a specific intent
-const INTENT_PATTERNS = [
-  {
-    intent: INTENTS.REGISTRATION,
-    keywords: [
-      'register', 'registration', 'enroll', 'enrollment', 'sign up',
-      'voter id', 'voter card', 'epic', 'form 6', 'form6',
-      'apply for voter', 'new voter', 'how to vote first time',
-      'eligible', 'eligibility', 'age to vote', 'who can vote',
-      'voter list', 'electoral roll', 'name in voter list',
-      'required documents', 'documents required', 'what documents',
-      'how do i register', 'registration process'
-    ],
-  },
-  {
-    intent: INTENTS.RESULTS,
-    keywords: [
-      'result', 'results', 'outcome', 'who won', 'winner',
-      'counting', 'vote count', 'tally', 'declaration',
-      'election schedule', 'election date', 'when is election',
-      'timeline', 'phases', 'phase', 'schedule', 'when will',
-      'announcement', 'notification', 'campaigning', 'campaign period',
-      'nomination', 'scrutiny', 'election dates'
-    ],
-  },
-  {
-    intent: INTENTS.LEARNING,
-    keywords: [
-      'what is evm', 'what is vvpat', 'what is nota', 'what is mcc',
-      'explain evm', 'explain vvpat', 'explain nota',
-      'meaning of', 'define', 'definition', 'term', 'terminology',
-      'what does', 'abbreviation', 'full form',
-      'lok sabha meaning', 'rajya sabha meaning',
-      'model code of conduct', 'election commission',
-      'learn', 'understand', 'teach me',
-    ],
-  },
-  {
-    intent: INTENTS.POLLING,
-    keywords: [
-      'polling day', 'voting day', 'on election day',
-      'cast vote', 'how to cast', 'at the booth',
-      'documents needed', 'id proof', 'identity proof', 'what to bring',
-      'ink', 'indelible ink', 'finger', 'verification'
-    ],
-  },
-  {
-    intent: INTENTS.BOOTH_FINDER,
-    keywords: [
-      'polling booth', 'polling station', 'find booth', 'find my booth',
-      'where to vote', 'where is my booth', 'nearest booth',
-      'booth location', 'booth near me', 'nearby booth',
-      'locate booth', 'locate polling', 'booth address',
-      'booth finder', 'find polling station',
-      'where do i vote', 'my polling station',
-    ],
-  },
-];
+
 
 // ─── Context-Aware Prompt Templates ─────────────────────────────
 // Tailored system prompts per intent for better Gemini responses
@@ -233,40 +175,31 @@ export const analyzeBehavior = (lastMessage, currentIntent, history = []) => {
 };
 
 /**
- * Detects the user's intent from their message text.
- * Uses keyword matching with scoring — the intent with
- * the most keyword matches wins.
+ * Detects the user's intent from their message text using simple conditionals.
  * 
  * @param {string} message - The user's raw message
  * @returns {string} - One of the INTENTS values
  */
 export const detectIntent = (message) => {
-  const normalizedMessage = message.toLowerCase().trim();
+  const msg = message.toLowerCase().trim();
   
-  const scores = {};
-  
-  for (const pattern of INTENT_PATTERNS) {
-    scores[pattern.intent] = 0;
-    for (const keyword of pattern.keywords) {
-      if (normalizedMessage.includes(keyword)) {
-        // Longer keyword matches are weighted more heavily
-        scores[pattern.intent] += keyword.split(' ').length;
-      }
-    }
+  if (msg.includes('register') || msg.includes('voter id') || msg.includes('form 6') || msg.includes('enroll') || msg.includes('eligibility')) {
+    return INTENTS.REGISTRATION;
+  }
+  if (msg.includes('result') || msg.includes('schedule') || msg.includes('date') || msg.includes('timeline') || msg.includes('phase')) {
+    return INTENTS.RESULTS;
+  }
+  if (msg.includes('evm') || msg.includes('vvpat') || msg.includes('nota') || msg.includes('meaning') || msg.includes('explain') || msg.includes('what is')) {
+    return INTENTS.LEARNING;
+  }
+  if (msg.includes('polling day') || msg.includes('cast vote') || msg.includes('ink') || msg.includes('voting day')) {
+    return INTENTS.POLLING;
+  }
+  if (msg.includes('booth') || msg.includes('where to vote') || msg.includes('station')) {
+    return INTENTS.BOOTH_FINDER;
   }
   
-  // Find the intent with the highest score
-  let bestIntent = INTENTS.GENERAL;
-  let bestScore = 0;
-  
-  for (const [intent, score] of Object.entries(scores)) {
-    if (score > bestScore) {
-      bestScore = score;
-      bestIntent = intent;
-    }
-  }
-  
-  return bestIntent;
+  return INTENTS.GENERAL;
 };
 
 /**

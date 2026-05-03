@@ -10,7 +10,7 @@ import { FaRobot, FaUser } from 'react-icons/fa';
  */
 const ChatMessage = ({ message }) => {
   return (
-    <div className={`message-wrapper ${message.role}`} role="log">
+    <div className={`message-wrapper ${message.role}`}>
       <div className="message-avatar" aria-hidden="true">
         {message.role === 'assistant' ? <FaRobot /> : <FaUser />}
       </div>

@@ -2,18 +2,20 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import AssistantChat from '../components/AssistantChat';
-import AIFactory from '../services/ai/AIFactory';
+import GeminiProvider from '../services/ai/GeminiProvider';
 
-// Mock the AI Factory and Provider
-vi.mock('../services/ai/AIFactory');
+// Mock the Provider
+vi.mock('../services/ai/GeminiProvider');
 
 describe('AssistantChat Component Integration', () => {
   const mockGenerateResponse = vi.fn();
   
   beforeEach(() => {
     vi.clearAllMocks();
-    AIFactory.getProvider.mockReturnValue({
-      generateResponse: mockGenerateResponse
+    GeminiProvider.mockImplementation(() => {
+      return {
+        generateResponse: mockGenerateResponse
+      };
     });
   });
 

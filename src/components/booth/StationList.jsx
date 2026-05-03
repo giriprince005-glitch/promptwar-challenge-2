@@ -16,9 +16,9 @@ const StationList = ({ stations, onSelect, selectedStation }) => {
       <div className="results-header">
         <span className="results-count">📍 {stations.length} Stations Found</span>
       </div>
-      <ul className="stations-list" role="list" aria-label="Available Polling Stations">
+      <ul className="stations-list" aria-label="Available Polling Stations">
         {stations.map((station) => (
-          <li key={station.id} role="listitem">
+          <li key={station.id}>
             <button 
               className={`booth-result-card ${selectedStation?.id === station.id ? 'active' : ''}`}
               onClick={() => onSelect(station)}

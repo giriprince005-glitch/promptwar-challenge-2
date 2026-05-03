@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import AIFactory from '../services/ai/AIFactory';
+import GeminiProvider from '../services/ai/GeminiProvider';
 import { analyzeBehavior } from '../services/ai/aiService';
 import { logChatQuery } from '../services/firebaseService';
 import { sanitizeInput, validateInput, checkRateLimit } from '../utils/security';
@@ -37,66 +37,26 @@ export const useChat = (onNavigate) => {
     }
   }, [onNavigate]);
 
-  const handleSend = async () => {
-    setSecurityError(null);
-    
-    const sanitizedInput = sanitizeInput(input);
-    if (!sanitizedInput) return;
-
-    const validation = validateInput(sanitizedInput);
-    if (!validation.isValid) {
-      setSecurityError(validation.error);
-      return;
-    }
-
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-    if (!apiKey) {
-      setApiKeyError(true);
-      return;
-    }
-
-    setApiKeyError(false);
-    const userMessage = sanitizedInput;
-    setInput('');
-    
-    // Check Cache first
-    const cachedResponse = getCachedAIResponse(userMessage);
-    
-    setMessages(previousMessages => [
-      ...previousMessages, 
-      { role: 'user', text: userMessage, intent: null, navigation: null }
-    ]);
-    setIsLoading(true);
-
-    if (cachedResponse) {
-      setTimeout(() => {
-        setMessages(previousMessages => [
-          ...previousMessages, 
-          { 
-            role: 'assistant', 
-            text: cachedResponse.text,
-            intent: cachedResponse.intent,
-            navigation: cachedResponse.navigation, 
-            isCached: true
-          }
-        ]);
-        
-        // Analyze behavior for recommendation
-        analyzeBehavior(userMessage, cachedResponse.intent, messages);
-        
-        setIsLoading(false);
-      }, 300);
-      return;
-    }
-
-    if (!checkRateLimit('chat_cooldown', 2000)) {
-      setSecurityError('Please wait a moment before sending another message.');
+  const handleCachedResponse = (cachedResponse, userMessage) => {
+    setTimeout(() => {
+      setMessages(previousMessages => [
+        ...previousMessages, 
+        { 
+          role: 'assistant', 
+          text: cachedResponse.text,
+          intent: cachedResponse.intent,
+          navigation: cachedResponse.navigation, 
+          isCached: true
+        }
+      ]);
+      analyzeBehavior(userMessage, cachedResponse.intent, messages);
       setIsLoading(false);
-      return;
-    }
+    }, 300);
+  };
 
+  const fetchAndProcessResponse = async (apiKey, userMessage) => {
     try {
-      const provider = AIFactory.getProvider('gemini', apiKey);
+      const provider = new GeminiProvider(apiKey);
       const response = await provider.generateResponse(userMessage);
       
       setMessages(previousMessages => [
@@ -109,9 +69,7 @@ export const useChat = (onNavigate) => {
         }
       ]);
 
-      // Analyze behavior for proactive recommendation
       analyzeBehavior(userMessage, response.intent, messages);
-
       setCachedAIResponse(userMessage, response);
       logChatQuery(userMessage, response.intent, response.text);
     } catch (error) {
@@ -128,6 +86,49 @@ export const useChat = (onNavigate) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSend = async () => {
+    setSecurityError(null);
+    setApiKeyError(false);
+    
+    const sanitizedInput = sanitizeInput(input);
+    if (!sanitizedInput) return;
+
+    const validation = validateInput(sanitizedInput);
+    if (!validation.isValid) {
+      setSecurityError(validation.error);
+      return;
+    }
+
+    if (!checkRateLimit('chat_cooldown', 2000)) {
+      setSecurityError('Please wait a moment before sending another message.');
+      return;
+    }
+
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    if (!apiKey) {
+      setApiKeyError(true);
+      return;
+    }
+
+    const userMessage = sanitizedInput;
+    setInput('');
+    
+    const cachedResponse = getCachedAIResponse(userMessage);
+    
+    setMessages(previousMessages => [
+      ...previousMessages, 
+      { role: 'user', text: userMessage, intent: null, navigation: null }
+    ]);
+    setIsLoading(true);
+
+    if (cachedResponse) {
+      handleCachedResponse(cachedResponse, userMessage);
+      return;
+    }
+
+    await fetchAndProcessResponse(apiKey, userMessage);
   };
 
   const handleKeyPress = (e) => {
