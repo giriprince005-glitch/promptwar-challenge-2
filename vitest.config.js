@@ -13,7 +13,8 @@ export default defineConfig({
       exclude: [
         'node_modules/', 
         'src/test/', 
-        'dist/', 
+        'dist/',
+        'scratch/',
         '*.config.js', 
         'src/main.jsx',
         'src/utils/constants.jsx',

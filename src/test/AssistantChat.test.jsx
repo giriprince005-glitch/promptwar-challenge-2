@@ -12,6 +12,7 @@ describe('AssistantChat Component Integration', () => {
   
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
     GeminiProvider.mockImplementation(() => {
       return {
         generateResponse: mockGenerateResponse

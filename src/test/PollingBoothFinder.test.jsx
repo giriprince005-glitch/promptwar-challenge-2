@@ -29,6 +29,7 @@ global.window.google = {
 describe('PollingBoothFinder Integration', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
   });
 
   it('should display an error for invalid locations', async () => {

@@ -110,9 +110,6 @@ const formatPlaceResult = (place, origin) => {
     distanceValue: distance,
   };
 };
-
-
-
 /**
  * Get the user's current location via the browser's Geolocation API.
  * 

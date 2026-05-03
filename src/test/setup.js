@@ -16,12 +16,13 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
-// Mock localStorage
+// Functional in-memory localStorage mock
+const localStorageStore = {};
 const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
+  getItem: vi.fn((key) => localStorageStore[key] ?? null),
+  setItem: vi.fn((key, value) => { localStorageStore[key] = String(value); }),
+  removeItem: vi.fn((key) => { delete localStorageStore[key]; }),
+  clear: vi.fn(() => { Object.keys(localStorageStore).forEach(k => delete localStorageStore[k]); }),
 };
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 

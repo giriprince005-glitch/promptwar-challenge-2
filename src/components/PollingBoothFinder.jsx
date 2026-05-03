@@ -103,8 +103,7 @@ export default function PollingBoothFinder() {
     setIsSearching(true);
     setErrorMessage('');
     try {
-      const pos = await getCurrentLocation();
-      const location = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      const location = await getCurrentLocation();
       
       setMapCenter(location);
       setMapZoom(SEARCH_ZOOM);

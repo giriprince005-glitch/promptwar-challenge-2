@@ -1,6 +1,16 @@
 import React from 'react';
 import { FaChevronRight, FaChevronLeft, FaCheckCircle } from 'react-icons/fa';
 
+/**
+ * Displays the content for a single learning step with navigation controls.
+ *
+ * @param {Object} props
+ * @param {Object} props.step - Step data object (icon, title, summary, content, keyPoints)
+ * @param {number} props.currentStep - Zero-based index of the current step
+ * @param {number} props.totalSteps - Total number of steps
+ * @param {function(): void} props.handlePrev - Callback to go to the previous step
+ * @param {function(): void} props.handleNext - Callback to go to the next step
+ */
 export default function StepCard({ step, currentStep, totalSteps, handlePrev, handleNext }) {
   return (
     <div className="learning-content-card glass-panel">

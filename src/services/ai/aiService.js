@@ -46,9 +46,6 @@ const MODULE_MAP = {
   },
   [INTENTS.GENERAL]: null, // No module routing for general queries
 };
-
-
-
 // ─── Context-Aware Prompt Templates ─────────────────────────────
 // Tailored system prompts per intent for better Gemini responses
 const INTENT_PROMPTS = {
