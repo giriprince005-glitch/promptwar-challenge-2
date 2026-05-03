@@ -16,36 +16,38 @@ const StationList = ({ stations, onSelect, selectedStation }) => {
       <div className="results-header">
         <span className="results-count">📍 {stations.length} Stations Found</span>
       </div>
-      <div className="stations-list" role="list">
+      <ul className="stations-list" role="list" aria-label="Available Polling Stations">
         {stations.map((station) => (
-          <button 
-            key={station.id} 
-            className={`booth-result-card ${selectedStation?.id === station.id ? 'active' : ''}`}
-            onClick={() => onSelect(station)}
-            aria-label={`Select station: ${station.name}`}
-          >
-            <div className="station-info">
-              <h4 className="station-name">{station.name}</h4>
-              <p className="station-address">{station.address}</p>
-              {station.distance && (
-                <span className="station-distance">{station.distance}</span>
-              )}
-            </div>
-            <div className="station-actions">
-              <a 
-                href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(station.address)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="directions-link"
-                onClick={(e) => e.stopPropagation()}
-                aria-label={`Get directions to ${station.name}`}
-              >
-                <FaDirections />
-              </a>
-            </div>
-          </button>
+          <li key={station.id} role="listitem">
+            <button 
+              className={`booth-result-card ${selectedStation?.id === station.id ? 'active' : ''}`}
+              onClick={() => onSelect(station)}
+              aria-label={`Select station: ${station.name}`}
+              aria-current={selectedStation?.id === station.id ? 'true' : 'false'}
+            >
+              <div className="station-info">
+                <h4 className="station-name">{station.name}</h4>
+                <p className="station-address">{station.address}</p>
+                {station.distance && (
+                  <span className="station-distance">{station.distance}</span>
+                )}
+              </div>
+              <div className="station-actions">
+                <a 
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(station.address)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="directions-link"
+                  onClick={(e) => e.stopPropagation()}
+                  aria-label={`Get directions to ${station.name} on Google Maps`}
+                >
+                  <FaDirections aria-hidden="true" />
+                </a>
+              </div>
+            </button>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 };

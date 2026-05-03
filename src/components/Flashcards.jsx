@@ -25,21 +25,30 @@ export default function Flashcards() {
       
       <div className="cards-grid">
         {cardData.map((card) => (
-          <div 
+          <button 
             key={card.id} 
             className={`flashcard ${flippedCards.has(card.id) ? 'flipped' : ''}`}
             onClick={() => handleFlip(card.id)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleFlip(card.id);
+              }
+            }}
+            aria-pressed={flippedCards.has(card.id)}
+            aria-label={`Term: ${card.term}. Click to see definition.`}
+            type="button"
           >
             <div className="flashcard-inner">
-              <div className="flashcard-front flashcard-face-style">
+              <div className="flashcard-front flashcard-face-style" aria-hidden={flippedCards.has(card.id)}>
                 <h3>{card.term}</h3>
-                <div className="flip-icon"><FaSyncAlt /></div>
+                <div className="flip-icon"><FaSyncAlt aria-hidden="true" /></div>
               </div>
-              <div className="flashcard-back flashcard-face-style">
+              <div className="flashcard-back flashcard-face-style" aria-hidden={!flippedCards.has(card.id)}>
                 <p>{card.definition}</p>
               </div>
             </div>
-          </div>
+          </button>
         ))}
       </div>
     </div>

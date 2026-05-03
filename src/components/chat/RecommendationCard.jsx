@@ -12,18 +12,18 @@ const RecommendationCard = ({ recommendation, onClose, onNavigate }) => {
   if (!recommendation) return null;
 
   return (
-    <div className="recommendation-overlay animate-fade-in">
+    <div className="recommendation-overlay animate-fade-in" role="alert" aria-labelledby="rec-title">
       <div className="recommendation-card glass-panel">
         <button 
           className="close-recommendation" 
           onClick={onClose}
-          aria-label="Dismiss recommendation"
+          aria-label="Dismiss smart suggestion"
         >
-          <FaTimes />
+          <FaTimes aria-hidden="true" />
         </button>
         <div className="recommendation-header">
-          <FaLightbulb className="recommendation-icon" />
-          <h4>Smart Suggestion</h4>
+          <FaLightbulb className="recommendation-icon" aria-hidden="true" />
+          <h4 id="rec-title">Smart Suggestion</h4>
         </div>
         <div className="recommendation-content">
           <h5>{recommendation.title}</h5>
@@ -31,6 +31,7 @@ const RecommendationCard = ({ recommendation, onClose, onNavigate }) => {
           <button 
             className="btn recommendation-btn"
             onClick={() => onNavigate(recommendation.component)}
+            aria-label={`Action: ${recommendation.actionLabel}`}
           >
             {recommendation.actionLabel}
           </button>

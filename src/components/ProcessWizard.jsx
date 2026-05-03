@@ -19,22 +19,34 @@ export default function ProcessWizard() {
       <h2>Your Voting Journey</h2>
       <p className="subtitle">A step-by-step guide to exercising your democratic right.</p>
 
-      <div className="wizard-progress">
+      <div className="wizard-progress" role="tablist" aria-label="Registration Steps">
         {steps.map((step, index) => (
-          <div 
+          <button 
             key={step.id} 
             className={`progress-step ${index <= currentStep ? 'active' : ''}`}
             onClick={() => setCurrentStep(index)}
+            role="tab"
+            aria-selected={index === currentStep}
+            aria-controls={`step-panel-${index}`}
+            id={`step-tab-${index}`}
+            aria-label={`Step ${index + 1}: ${step.title}`}
           >
-            <div className="step-icon">{step.icon}</div>
+            <div className="step-icon" aria-hidden="true">{step.icon}</div>
             <span className="step-label">{step.title}</span>
-          </div>
+          </button>
         ))}
       </div>
 
-      <div className="wizard-content glass-panel animate-fade-in" key={currentStep}>
+      <div 
+        className="wizard-content glass-panel animate-fade-in" 
+        key={currentStep}
+        role="tabpanel"
+        id={`step-panel-${currentStep}`}
+        aria-labelledby={`step-tab-${currentStep}`}
+        aria-live="polite"
+      >
         <div className="content-header">
-          <div className="content-icon">{steps[currentStep].icon}</div>
+          <div className="content-icon" aria-hidden="true">{steps[currentStep].icon}</div>
           <h3>{steps[currentStep].title}</h3>
         </div>
         <p>{steps[currentStep].content}</p>
@@ -44,6 +56,7 @@ export default function ProcessWizard() {
             className="btn btn-secondary" 
             onClick={prevStep} 
             disabled={currentStep === 0}
+            aria-label="Go to previous step"
           >
             Previous
           </button>
@@ -51,8 +64,9 @@ export default function ProcessWizard() {
             className="btn" 
             onClick={nextStep} 
             disabled={currentStep === steps.length - 1}
+            aria-label={currentStep === steps.length - 1 ? "Finish guide" : "Go to next step"}
           >
-            {currentStep === steps.length - 1 ? "Finish" : "Next Step"} <FaArrowRight />
+            {currentStep === steps.length - 1 ? "Finish" : "Next Step"} <FaArrowRight aria-hidden="true" />
           </button>
         </div>
       </div>

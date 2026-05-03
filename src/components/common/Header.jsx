@@ -7,11 +7,12 @@ const Header = ({ activeComponent, setActiveComponent }) => {
         <h1>India Elects</h1>
         <p>Your interactive guide to the world's largest democratic process.</p>
       </div>
-      <nav className="main-nav">
+      <nav className="main-nav" aria-label="Main Navigation">
         <button 
           className={`nav-btn ${activeComponent === 'assistant' ? 'active' : ''}`}
           onClick={() => setActiveComponent('assistant')}
           aria-current={activeComponent === 'assistant' ? 'page' : undefined}
+          aria-label="Open AI Assistant"
         >
           AI Assistant
         </button>
@@ -19,6 +20,7 @@ const Header = ({ activeComponent, setActiveComponent }) => {
           className={`nav-btn ${activeComponent === 'wizard' ? 'active' : ''}`}
           onClick={() => setActiveComponent('wizard')}
           aria-current={activeComponent === 'wizard' ? 'page' : undefined}
+          aria-label="Open Voter Registration Guide"
         >
           Voter Guide
         </button>
@@ -26,6 +28,7 @@ const Header = ({ activeComponent, setActiveComponent }) => {
           className={`nav-btn ${activeComponent === 'timeline' ? 'active' : ''}`}
           onClick={() => setActiveComponent('timeline')}
           aria-current={activeComponent === 'timeline' ? 'page' : undefined}
+          aria-label="View Election Timeline"
         >
           Timeline
         </button>
@@ -33,6 +36,7 @@ const Header = ({ activeComponent, setActiveComponent }) => {
           className={`nav-btn ${activeComponent === 'flashcards' ? 'active' : ''}`}
           onClick={() => setActiveComponent('flashcards')}
           aria-current={activeComponent === 'flashcards' ? 'page' : undefined}
+          aria-label="Learn Electoral Terminology"
         >
           Learn Terms
         </button>
@@ -40,6 +44,7 @@ const Header = ({ activeComponent, setActiveComponent }) => {
           className={`nav-btn ${activeComponent === 'booth' ? 'active' : ''}`}
           onClick={() => setActiveComponent('booth')}
           aria-current={activeComponent === 'booth' ? 'page' : undefined}
+          aria-label="Open Polling Booth Finder"
         >
           Find Booth
         </button>

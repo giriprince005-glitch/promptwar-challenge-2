@@ -8,17 +8,20 @@ export default function ElectionTimeline() {
       <h2>The Election Cycle</h2>
       <p className="subtitle">Understanding the step-by-step process of Indian elections.</p>
       
-      <div className="timeline">
+      <ol className="timeline" aria-label="Election Cycle Phases">
         {timelineData.map((item, index) => (
-          <div key={index} className={`timeline-item ${index % 2 === 0 ? 'left' : 'right'}`}>
-            <div className="timeline-content glass-panel">
+          <li 
+            key={index} 
+            className={`timeline-item ${index % 2 === 0 ? 'left' : 'right'}`}
+          >
+            <article className="timeline-content glass-panel">
               <span className="phase-badge">{item.phase}</span>
               <h3>{item.title}</h3>
               <p>{item.description}</p>
-            </div>
-          </div>
+            </article>
+          </li>
         ))}
-      </div>
+      </ol>
     </div>
   );
 }
