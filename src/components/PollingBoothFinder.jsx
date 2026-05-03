@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import { useJsApiLoader } from '@react-google-maps/api';
 import { geocodeAddress, searchPollingStations, getCurrentLocation } from '../services/mapsService';
 import { logBoothSearch } from '../services/firebaseService';
-import { sanitizeInput, checkRateLimit } from '../utils/security';
+import { sanitizeInput, validateInput, checkRateLimit } from '../utils/security';
 import { getCachedGeoResult, setCachedGeoResult } from '../services/cacheService';
 
 import BoothSearchForm from './booth/BoothSearchForm';
@@ -49,6 +49,13 @@ export default function PollingBoothFinder() {
   const handleSearch = async () => {
     const sanitizedSearch = sanitizeInput(searchQuery);
     if (!sanitizedSearch || !mapRef.current) return;
+
+    // Advanced Protection: Validate input for injection patterns even in map search
+    const validation = validateInput(sanitizedSearch);
+    if (!validation.isValid) {
+      setErrorMessage(validation.error);
+      return;
+    }
 
     if (!checkRateLimit('maps_search_cooldown', 2000)) {
       setErrorMessage('Please wait a moment before searching again.');
