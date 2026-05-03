@@ -7,18 +7,18 @@
 
 /**
  * Geocode an address string into lat/lng coordinates.
- * Uses the Google Maps Geocoder service.
- * 
- * @param {google.maps.Geocoder} geocoder - Geocoder instance
- * @param {string} address - Address string to geocode
+ * Geocodes a string address into latitude and longitude coordinates.
+ * @param {google.maps.Geocoder} geocoder - The Google Maps Geocoder instance
+ * @param {string} address - The human-readable address string
  * @returns {Promise<{lat: number, lng: number}>}
+ * @throws {Error} If geocoding fails or address is not found
  */
 export const geocodeAddress = (geocoder, address) => {
   return new Promise((resolve, reject) => {
     geocoder.geocode({ address }, (results, status) => {
       if (status === 'OK' && results[0]) {
-        const location = results[0].geometry.location;
-        resolve({ lat: location.lat(), lng: location.lng() });
+        const { lat, lng } = results[0].geometry.location;
+        resolve({ lat: lat(), lng: lng() });
       } else {
         reject(new Error(`Geocoding failed: ${status}`));
       }

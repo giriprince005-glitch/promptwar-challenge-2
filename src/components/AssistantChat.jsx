@@ -1,7 +1,20 @@
-import { FaPaperPlane, FaRobot, FaUser, FaArrowRight, FaLightbulb, FaTimes } from 'react-icons/fa';
+import React from 'react';
+import { FaRobot, FaArrowRight } from 'react-icons/fa';
 import { useChat } from '../hooks/useChat';
+import ChatMessage from './chat/ChatMessage';
+import ChatInput from './chat/ChatInput';
+import ChatSuggestions from './chat/ChatSuggestions';
+import RecommendationCard from './chat/RecommendationCard';
 import '../styles/AssistantChat.css';
 
+/**
+ * AssistantChat Component
+ * The main interactive AI layer of the application.
+ * Demonstrates modular component architecture and separation of concerns via useChat hook.
+ * 
+ * @param {Object} props
+ * @param {function(string): void} props.onNavigate - Callback to switch between app modules
+ */
 export default function AssistantChat({ onNavigate }) {
   const {
     messages,
@@ -14,55 +27,49 @@ export default function AssistantChat({ onNavigate }) {
     setActiveRecommendation,
     messagesEndRef,
     handleSend,
-    handleKeyPress,
     handleNavigate,
   } = useChat(onNavigate);
 
   return (
     <div className="chat-container glass-panel">
+      {/* Configuration & Security Warnings */}
       {apiKeyError && (
-        <div className="api-key-warning">
+        <div className="api-key-warning" role="alert">
           ⚠️ Missing Gemini API Key. Please add VITE_GEMINI_API_KEY to your .env file.
         </div>
       )}
 
       {securityError && (
-        <div className="security-warning">
+        <div className="security-warning" role="alert">
           ⚠️ {securityError}
         </div>
       )}
       
       <div className="chat-messages" aria-live="polite" aria-relevant="additions">
         {messages.map((message, index) => (
-          <div key={index} className={`message-wrapper ${message.role}`} role="log">
-            <div className="message-avatar" aria-hidden="true">
-              {message.role === 'assistant' ? <FaRobot /> : <FaUser />}
-            </div>
-            <div className="message-content-wrapper">
-              <div className={`message-bubble ${message.role}`}>
-                {message.text}
-              </div>
-              
-              {/* Navigation Suggestion Card */}
-              {message.role === 'assistant' && message.navigation && (
-                <button 
-                  className="navigation-card"
-                  onClick={() => handleNavigate(message.navigation.component)}
-                  aria-label={`Open ${message.navigation.label}: ${message.navigation.suggestion}`}
-                >
-                  <div className="navigation-card-content">
-                    <span className="navigation-card-label" aria-hidden="true">{message.navigation.label}</span>
-                    <p className="navigation-card-text">{message.navigation.suggestion}</p>
-                  </div>
-                  <FaArrowRight className="navigation-card-arrow" aria-hidden="true" />
-                </button>
-              )}
-            </div>
+          <div key={index} className="message-group">
+            <ChatMessage message={message} />
+            
+            {/* Contextual Module Navigation */}
+            {message.role === 'assistant' && message.navigation && (
+              <button 
+                className="navigation-card"
+                onClick={() => handleNavigate(message.navigation.component)}
+                aria-label={`Open ${message.navigation.label}: ${message.navigation.suggestion}`}
+              >
+                <div className="navigation-card-content">
+                  <span className="navigation-card-label" aria-hidden="true">{message.navigation.label}</span>
+                  <p className="navigation-card-text">{message.navigation.suggestion}</p>
+                </div>
+                <FaArrowRight className="navigation-card-arrow" aria-hidden="true" />
+              </button>
+            )}
           </div>
         ))}
 
+        {/* Typing Indicator */}
         {isLoading && (
-          <div className="message-wrapper assistant" aria-label="Assistant is typing">
+          <div className="message-wrapper assistant" aria-label="Assistant is thinking">
             <div className="message-avatar" aria-hidden="true"><FaRobot /></div>
             <div className="message-content-wrapper">
               <div className="message-bubble typing-indicator">
@@ -73,73 +80,37 @@ export default function AssistantChat({ onNavigate }) {
         )}
         
         {/* Proactive Recommendation Card */}
-        {activeRecommendation && (
-          <div className="recommendation-overlay animate-fade-in">
-            <div className="recommendation-card glass-panel">
-              <button 
-                className="close-recommendation" 
-                onClick={() => setActiveRecommendation(null)}
-                aria-label="Dismiss recommendation"
-              >
-                <FaTimes />
-              </button>
-              <div className="recommendation-header">
-                <FaLightbulb className="recommendation-icon" />
-                <h4>Smart Suggestion</h4>
-              </div>
-              <div className="recommendation-content">
-                <h5>{activeRecommendation.title}</h5>
-                <p>{activeRecommendation.message}</p>
-                <button 
-                  className="btn recommendation-btn"
-                  onClick={() => handleNavigate(activeRecommendation.component)}
-                >
-                  {activeRecommendation.actionLabel}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        <RecommendationCard 
+          recommendation={activeRecommendation}
+          onClose={() => setActiveRecommendation(null)}
+          onNavigate={handleNavigate}
+        />
 
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="chat-input-area">
-        <textarea
+      {/* Input & Interaction Layer */}
+      <div className="chat-controls">
+        <ChatInput 
           value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyPress}
-          placeholder="Ask about Form 6, EVMs, or polling rules..."
+          onChange={setInput}
+          onSend={handleSend}
           disabled={isLoading}
-          rows={1}
-          aria-label="Message India Elects Assistant"
         />
-        <button 
-          className="send-btn" 
-          onClick={handleSend} 
-          disabled={isLoading || !input.trim()}
-          aria-label="Send message"
-        >
-          <FaPaperPlane />
-        </button>
+        
+        <ChatSuggestions onSelect={(text) => {
+          setInput(text);
+          // Auto-send could be implemented here if desired
+        }} />
       </div>
-      
-      <div className="suggested-questions" role="group" aria-label="Suggested questions">
-        {[
-          { text: "How do I register to vote online?", label: "How do I register?" },
-          { text: "What documents do I need on polling day?", label: "Required documents?" },
-          { text: "Explain how a VVPAT machine works.", label: "What is VVPAT?" },
-          { text: "When are the next elections?", label: "Election schedule?" }
-        ].map((q, i) => (
-          <button 
-            key={i}
-            className="suggestion-btn"
-            onClick={() => setInput(q.text)}
-            aria-label={`Ask: ${q.text}`}
-          >
-            {q.label}
-          </button>
-        ))}
+
+      {/* Legal & Responsible AI Disclaimer */}
+      <div className="chat-footer-disclaimer">
+        <p>
+          AI-generated information for guidance. Always verify with the 
+          <a href="https://voters.eci.gov.in" target="_blank" rel="noopener noreferrer"> official ECI portal</a>.
+          Strictly Informational & Neutral. Powered by Gemini.
+        </p>
       </div>
     </div>
   );

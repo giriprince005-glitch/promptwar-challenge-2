@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { detectIntent, INTENTS } from '../services/aiService';
+import { detectIntent, INTENTS } from '../services/ai/aiService';
 
 describe('AI Service - Intent Detection', () => {
   it('should detect REGISTRATION intent for queries about signing up to vote', () => {

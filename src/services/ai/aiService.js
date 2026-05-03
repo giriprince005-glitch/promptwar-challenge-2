@@ -219,7 +219,40 @@ export const analyzeBehavior = (lastMessage, currentIntent, history = []) => {
 
 /**
  * Detects the user's intent from their message text.
-... (existing detectIntent code)
+ * Uses keyword matching with scoring — the intent with
+ * the most keyword matches wins.
+ * 
+ * @param {string} message - The user's raw message
+ * @returns {string} - One of the INTENTS values
+ */
+export const detectIntent = (message) => {
+  const normalizedMessage = message.toLowerCase().trim();
+  
+  const scores = {};
+  
+  for (const pattern of INTENT_PATTERNS) {
+    scores[pattern.intent] = 0;
+    for (const keyword of pattern.keywords) {
+      if (normalizedMessage.includes(keyword)) {
+        // Longer keyword matches are weighted more heavily
+        scores[pattern.intent] += keyword.split(' ').length;
+      }
+    }
+  }
+  
+  // Find the intent with the highest score
+  let bestIntent = INTENTS.GENERAL;
+  let bestScore = 0;
+  
+  for (const [intent, score] of Object.entries(scores)) {
+    if (score > bestScore) {
+      bestScore = score;
+      bestIntent = intent;
+    }
+  }
+  
+  return bestIntent;
+};
 
 /**
  * Builds a context-aware prompt for the Gemini API

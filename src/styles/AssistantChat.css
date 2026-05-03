@@ -355,3 +355,22 @@
   width: 100%;
   justify-content: center;
 }
+
+.chat-footer-disclaimer {
+  margin-top: 1rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  text-align: center;
+}
+
+.chat-footer-disclaimer p {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.chat-footer-disclaimer a {
+  color: var(--saffron);
+  text-decoration: underline;
+  font-weight: 600;
+}

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { askAssistant, analyzeBehavior } from '../services/geminiService';
+import AIFactory from '../services/ai/AIFactory';
+import { analyzeBehavior } from '../services/ai/aiService';
 import { logChatQuery } from '../services/firebaseService';
 import { sanitizeInput, validateInput, checkRateLimit } from '../utils/security';
 import { getCachedAIResponse, setCachedAIResponse } from '../services/cacheService';
@@ -99,7 +100,8 @@ export const useChat = (onNavigate) => {
     }
 
     try {
-      const response = await askAssistant(userMessage, apiKey);
+      const provider = AIFactory.getProvider('gemini', apiKey);
+      const response = await provider.generateResponse(userMessage);
       
       setMessages(previousMessages => [
         ...previousMessages, 
