@@ -17,6 +17,14 @@ const Header = ({ activeComponent, setActiveComponent }) => {
           AI Assistant
         </button>
         <button 
+          className={`nav-btn ${activeComponent === 'learning_mode' ? 'active' : ''}`}
+          onClick={() => setActiveComponent('learning_mode')}
+          aria-current={activeComponent === 'learning_mode' ? 'page' : undefined}
+          aria-label="Start Guided Learning Mode"
+        >
+          Learn Mode
+        </button>
+        <button 
           className={`nav-btn ${activeComponent === 'wizard' ? 'active' : ''}`}
           onClick={() => setActiveComponent('wizard')}
           aria-current={activeComponent === 'wizard' ? 'page' : undefined}

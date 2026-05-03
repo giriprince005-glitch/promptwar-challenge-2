@@ -10,6 +10,7 @@ const Flashcards = lazy(() => import('./components/Flashcards'));
 const ElectionTimeline = lazy(() => import('./components/ElectionTimeline'));
 const ProcessWizard = lazy(() => import('./components/ProcessWizard'));
 const PollingBoothFinder = lazy(() => import('./components/PollingBoothFinder'));
+const GuidedLearning = lazy(() => import('./components/GuidedLearning'));
 
 // Loading component for Suspense
 const LoadingModule = () => (
@@ -32,6 +33,7 @@ function App() {
       <main className="main-content animate-fade-in" style={{ animationDelay: '0.2s' }}>
         <Suspense fallback={<LoadingModule />}>
           {activeComponent === 'assistant' && <AssistantChat onNavigate={setActiveComponent} />}
+          {activeComponent === 'learning_mode' && <GuidedLearning />}
           {activeComponent === 'wizard' && <ProcessWizard />}
           {activeComponent === 'timeline' && <ElectionTimeline />}
           {activeComponent === 'flashcards' && <Flashcards />}

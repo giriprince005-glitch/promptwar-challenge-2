@@ -88,3 +88,54 @@ export const timelineData = [
     description: "Votes are counted under heavy security. The results are officially declared by the Returning Officer."
   }
 ];
+
+export const learningFlow = [
+  {
+    id: 'intro',
+    title: 'What is an Election?',
+    icon: '🏛️',
+    summary: 'The heartbeat of democracy.',
+    content: 'In a democracy like India, an election is a formal group decision-making process by which a population chooses an individual to hold public office. It is the method by which citizens exercise their sovereignty and participate in the governance of the country.',
+    keyPoints: [
+      'India is the world\\'s largest democracy.',
+      'Elections happen at National (Lok Sabha) and State (Vidhan Sabha) levels.',
+      'Universal Adult Suffrage: Every citizen aged 18+ has one vote, regardless of background.'
+    ]
+  },
+  {
+    id: 'registration',
+    title: 'Voter Registration',
+    icon: '📋',
+    summary: 'Getting your name on the list.',
+    content: 'Before you can vote, you must be \\'enrolled\\' in the Electoral Roll (voter list) of your constituency. This is a crucial step to ensure that only eligible citizens participate in the process.',
+    keyPoints: [
+      'Use Form 6 to register as a new voter.',
+      'You need proof of age and proof of residence.',
+      'The ECI issues a Voter ID card (EPIC) upon successful registration.'
+    ]
+  },
+  {
+    id: 'voting',
+    title: 'The Voting Process',
+    icon: '🗳️',
+    summary: 'Inside the polling booth.',
+    content: 'Voting in India is a highly structured and secure process. On election day, voters visit their assigned polling booth to cast their vote using Electronic Voting Machines (EVMs).',
+    keyPoints: [
+      'Identity is verified using the Voter ID or other approved IDs.',
+      'Indelible ink is applied to the left forefinger.',
+      'The VVPAT machine shows a slip for 7 seconds to confirm your vote.'
+    ]
+  },
+  {
+    id: 'results',
+    title: 'Results & Timeline',
+    icon: '📅',
+    summary: 'From counting to celebration.',
+    content: 'After all phases of voting are complete, the counting of votes takes place on a designated day. The entire process is strictly monitored by the Election Commission to ensure total transparency.',
+    keyPoints: [
+      'Counting is done in the presence of candidates\\' representatives.',
+      'The Returning Officer officially declares the winner.',
+      'The Model Code of Conduct ends once the results are declared.'
+    ]
+  }
+];

@@ -182,6 +182,13 @@ export const RECOMMENDATIONS = {
     message: 'You can find your designated polling station on our interactive map. Want to check your booth location?',
     actionLabel: 'Find Booth',
     component: 'booth'
+  },
+  LEARN_MODE: {
+    id: 'rec_learn_mode',
+    title: 'Master the Process',
+    message: 'Would you like a structured, step-by-step guide to the entire Indian election process?',
+    actionLabel: 'Start Learning',
+    component: 'learning_mode'
   }
 };
 
@@ -196,6 +203,12 @@ export const RECOMMENDATIONS = {
 export const analyzeBehavior = (lastMessage, currentIntent, history = []) => {
   const normalizedMessage = lastMessage.toLowerCase();
   
+  // 0. Proactive for broad educational intent
+  const broadEducationalKeywords = ['how do elections work', 'what is the process', 'explain everything', 'start from beginning', 'basics', 'overview'];
+  if (broadEducationalKeywords.some(k => normalizedMessage.includes(k))) {
+    return RECOMMENDATIONS.LEARN_MODE;
+  }
+
   // 1. Proactive for first-time voters
   const firstTimeKeywords = ['first time', 'new voter', 'how to start', 'never voted', '18 years', 'just turned'];
   if (firstTimeKeywords.some(k => normalizedMessage.includes(k)) || currentIntent === INTENTS.REGISTRATION) {
