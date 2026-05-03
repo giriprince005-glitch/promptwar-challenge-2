@@ -35,7 +35,7 @@ class GeminiProvider {
 
       // 2. Call Gemini API using @google/genai syntax
       const response = await this.genAI.models.generateContent({
-        model: 'gemini-1.5-flash',
+        model: 'gemini-2.5-flash',
         contents: contextPrompt
       });
       
