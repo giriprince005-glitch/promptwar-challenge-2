@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { FaSyncAlt } from 'react-icons/fa';
 import { cardData } from '../utils/constants';
 import '../styles/Flashcards.css';

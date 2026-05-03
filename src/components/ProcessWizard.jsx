@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import { steps } from '../utils/constants';
 import '../styles/ProcessWizard.css';

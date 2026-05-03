@@ -1,3 +1,4 @@
+import React from 'react';
 import { FaCheckCircle, FaIdCard, FaMapMarkerAlt, FaVoteYea } from 'react-icons/fa';
 
 export const cardData = [

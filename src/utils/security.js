@@ -45,7 +45,8 @@ export const sanitizeInput = (input) => {
  * @returns {object} - { isValid: boolean, error: string|null }
  */
 export const validateInput = (input) => {
-  if (!input || input.length < 2) {
+  const trimmedInput = (input || '').trim();
+  if (!trimmedInput || trimmedInput.length < 2) {
     return { isValid: false, error: 'Message is too short.' };
   }
   

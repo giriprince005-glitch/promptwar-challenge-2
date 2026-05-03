@@ -33,5 +33,10 @@ describe('Security Utility', () => {
       const result = validateInput(input);
       expect(result.isValid).toBe(false);
     });
+
+    it('should fail for empty or whitespace-only messages', () => {
+      expect(validateInput('').isValid).toBe(false);
+      expect(validateInput('   ').isValid).toBe(false);
+    });
   });
 });

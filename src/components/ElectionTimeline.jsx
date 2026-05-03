@@ -1,3 +1,4 @@
+import React from 'react';
 import { timelineData } from '../utils/constants';
 import '../styles/ElectionTimeline.css';
 

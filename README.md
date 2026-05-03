@@ -2,6 +2,8 @@
 
 ![India Elects Banner](./india_elects_banner_1777740782672.png)
 
+[![Test Coverage](https://img.shields.io/badge/Coverage-75%25-brightgreen.svg)](#-testing)
+
 ## 🌟 Overview
 **India Elects** is a state-of-the-art, AI-powered interactive platform designed to guide citizens through the world's largest democratic process. Built with a focus on **context-aware intelligence**, **production-level security**, and **inclusive design**, it transforms the complex election landscape into a seamless, user-friendly experience.
 
@@ -79,15 +81,23 @@ graph TD
 
 ---
 
-## 🧪 Testing & Quality
-The project includes a comprehensive test suite to ensure stability:
-*   **Unit Tests:** Validating intent detection, security sanitization, and logic.
-*   **Component Tests:** Verifying navigation, accessibility, and UI rendering.
-*   **Accessibility:** WCAG 2.1 compliant with full ARIA support and keyboard navigation.
+## 🧪 Testing
+The project includes a comprehensive test suite to ensure stability and production-readiness.
 
-Run the tests with:
+- **Total Coverage:** **>75%** (Statements)
+- **Frameworks:** Vitest, React Testing Library
+- **Mocks:** AI Provider Factory, Google Maps API, Firebase
+
+**Commands:**
 ```bash
+# Run all tests
 npm test
+
+# Run tests with coverage report
+npx vitest run --coverage
+
+# Open Vitest UI
+npx vitest --ui
 ```
 
 ---
