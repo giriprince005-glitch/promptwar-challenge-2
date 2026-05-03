@@ -15,7 +15,7 @@ class GeminiProvider {
       throw new Error('Gemini API Key is missing. Check your environment variables.');
     }
     this.apiKey = apiKey;
-    this.genAI = new GoogleGenAI(apiKey);
+    this.genAI = new GoogleGenAI({ apiKey });
   }
 
   /**
@@ -33,11 +33,14 @@ class GeminiProvider {
       const contextPrompt = buildContextPrompt(sanitizedMessage, intent);
       const navigation = getNavigation(intent);
 
-      // 2. Call Gemini API
-      const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-      const result = await model.generateContent(contextPrompt);
-      const response = await result.response;
-      let text = response.text();
+      // 2. Call Gemini API using @google/genai syntax
+      const response = await this.genAI.models.generateContent({
+        model: 'gemini-1.5-flash',
+        contents: contextPrompt
+      });
+      
+      // The response object in @google/genai has a 'text' property
+      let text = response.text || "I'm sorry, I couldn't generate a response.";
 
       // 3. Validate AI response for safety/leaks
       text = validateAIResponse(text);

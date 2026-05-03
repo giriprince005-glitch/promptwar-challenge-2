@@ -146,7 +146,7 @@ export default function PollingBoothFinder() {
             </div>
           )}
 
-          <div className="booth-results-layout">
+          <div className="booth-content-layout">
             <MapDisplay 
               center={mapCenter}
               zoom={mapZoom}

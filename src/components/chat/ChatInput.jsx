@@ -18,16 +18,15 @@ const ChatInput = ({ value, onChange, onSend, disabled }) => {
   };
 
   return (
-    <div className="chat-input-wrapper">
-      <input
-        type="text"
-        className="chat-input"
+    <div className="chat-input-area">
+      <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Ask about Form 6, EVMs, or polling rules..."
         disabled={disabled}
         aria-label="Ask a question about Indian elections"
+        rows="1"
       />
       <button 
         className="send-btn" 
@@ -35,7 +34,7 @@ const ChatInput = ({ value, onChange, onSend, disabled }) => {
         disabled={disabled || !value.trim()}
         aria-label="Send message"
       >
-        <FaPaperPlane />
+        <FaPaperPlane aria-hidden="true" />
       </button>
     </div>
   );

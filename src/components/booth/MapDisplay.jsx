@@ -48,7 +48,7 @@ const MapDisplay = ({
   onCloseInfo 
 }) => {
   return (
-    <div className="map-wrapper" aria-hidden="true">
+    <div className="booth-map-container" aria-hidden="true">
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         zoom={zoom}

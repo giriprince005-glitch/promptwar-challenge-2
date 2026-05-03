@@ -17,9 +17,9 @@ const BoothSearchForm = ({ query, setQuery, onSearch, onLocate, isLoading }) => 
   };
 
   return (
-    <form className="search-box" onSubmit={handleSubmit} role="search">
-      <div className="input-group">
-        <FaMapMarkerAlt className="input-icon" />
+    <form className="booth-search-bar glass-panel" onSubmit={handleSubmit} role="search">
+      <div className="booth-search-input-group">
+        <FaSearch className="search-icon" />
         <input
           type="text"
           placeholder="Enter your address or city (e.g., Delhi, Mumbai...)"
@@ -28,23 +28,21 @@ const BoothSearchForm = ({ query, setQuery, onSearch, onLocate, isLoading }) => 
           aria-label="Search address for polling booth"
         />
       </div>
-      <div className="search-actions">
-        <button 
-          type="submit" 
-          className="btn btn-primary"
-          disabled={isLoading || !query.trim()}
-        >
-          <FaSearch /> {isLoading ? 'Searching...' : 'Search'}
-        </button>
-        <button 
-          type="button" 
-          className="btn btn-secondary"
-          onClick={onLocate}
-          disabled={isLoading}
-        >
-          <FaCrosshairs /> Use My Location
-        </button>
-      </div>
+      <button 
+        type="submit" 
+        className="btn booth-search-btn"
+        disabled={isLoading || !query.trim()}
+      >
+        {isLoading ? 'Searching...' : 'Search Booth'}
+      </button>
+      <button 
+        type="button" 
+        className="btn btn-secondary booth-location-btn"
+        onClick={onLocate}
+        disabled={isLoading}
+      >
+        <FaCrosshairs /> Use Location
+      </button>
     </form>
   );
 };
