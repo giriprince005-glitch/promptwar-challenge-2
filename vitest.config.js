@@ -16,7 +16,8 @@ export default defineConfig({
         'dist/', 
         '*.config.js', 
         'src/main.jsx',
-        'src/utils/constants.jsx'
+        'src/utils/constants.jsx',
+        'src/services/ai/types.js'
       ],
     },
   },

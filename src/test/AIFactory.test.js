@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import AIFactory from '../services/ai/AIFactory';
 import GeminiProvider from '../services/ai/GeminiProvider';
 

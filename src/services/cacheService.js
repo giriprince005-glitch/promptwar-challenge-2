@@ -24,7 +24,7 @@ const getCachedValue = (cacheKey, query) => {
     const cache = JSON.parse(localStorage.getItem(cacheKey) || '{}');
     const normalizedQuery = query.toLowerCase().trim();
     return cache[normalizedQuery] || null;
-  } catch (e) {
+  } catch {
     return null;
   }
 };

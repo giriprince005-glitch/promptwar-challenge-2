@@ -113,7 +113,7 @@ export default function PollingBoothFinder() {
       setStations(results);
       setHasSearched(true);
       setSearchQuery('Current Location');
-    } catch (error) {
+    } catch {
       setErrorMessage('Could not determine your location. Please check browser permissions.');
     } finally {
       setIsSearching(false);

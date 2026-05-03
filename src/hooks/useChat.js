@@ -21,7 +21,6 @@ export const useChat = (onNavigate) => {
   const [isLoading, setIsLoading] = useState(false);
   const [apiKeyError, setApiKeyError] = useState(false);
   const [securityError, setSecurityError] = useState(null);
-  const [activeRecommendation, setActiveRecommendation] = useState(null);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -35,13 +34,11 @@ export const useChat = (onNavigate) => {
   const handleNavigate = useCallback((component) => {
     if (onNavigate && component) {
       onNavigate(component);
-      setActiveRecommendation(null);
     }
   }, [onNavigate]);
 
   const handleSend = async () => {
     setSecurityError(null);
-    setActiveRecommendation(null);
     
     const sanitizedInput = sanitizeInput(input);
     if (!sanitizedInput) return;
@@ -85,8 +82,7 @@ export const useChat = (onNavigate) => {
         ]);
         
         // Analyze behavior for recommendation
-        const recommendation = analyzeBehavior(userMessage, cachedResponse.intent, messages);
-        if (recommendation) setActiveRecommendation(recommendation);
+        analyzeBehavior(userMessage, cachedResponse.intent, messages);
         
         setIsLoading(false);
       }, 300);
@@ -114,8 +110,7 @@ export const useChat = (onNavigate) => {
       ]);
 
       // Analyze behavior for proactive recommendation
-      const recommendation = analyzeBehavior(userMessage, response.intent, messages);
-      if (recommendation) setActiveRecommendation(recommendation);
+      analyzeBehavior(userMessage, response.intent, messages);
 
       setCachedAIResponse(userMessage, response);
       logChatQuery(userMessage, response.intent, response.text);

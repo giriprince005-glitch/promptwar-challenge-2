@@ -36,7 +36,7 @@ export const geocodeAddress = (geocoder, address) => {
  * @returns {Promise<Array>} - Array of place results
  */
 export const searchPollingStations = (map, location, radius = 5000) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, _reject) => {
     const service = new window.google.maps.places.PlacesService(map);
 
     const searchQueries = [
