@@ -39,8 +39,13 @@ class GeminiProvider {
         contents: contextPrompt
       });
       
-      // The response object in @google/genai has a 'text' property
-      let text = response.text || "I'm sorry, I couldn't generate a response.";
+      // Handle RECITATION block reason - Gemini sometimes blocks factual lists
+      let text = response.text;
+      if (!text && response.candidates && response.candidates[0]?.finishReason === 'RECITATION') {
+        text = "I cannot provide the exact list directly due to safety filters, but you will generally need a valid Photo ID like an Aadhaar Card, PAN Card, Passport, Driving License, or your official Voter ID (EPIC) card. Please verify the complete list of accepted documents on the official ECI portal.";
+      } else if (!text) {
+        text = "I'm sorry, I couldn't generate a response.";
+      }
 
       // 3. Validate AI response for safety/leaks
       text = validateAIResponse(text);
